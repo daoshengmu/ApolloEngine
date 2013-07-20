@@ -22,6 +22,20 @@ ATOM				MyRegisterClass(HINSTANCE hInstance);
 BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
+void Update();
+
+Cube *cubeA = NULL;
+Cube *cubeB = NULL;
+
+struct TransformCubeB
+{
+	//Matrix4x4f _matrixA;
+	Vector3f _axis;
+	float    _angle;
+	Vector3f _vectorBA;
+};
+
+TransformCubeB transformCubeB;
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,
@@ -52,43 +66,79 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SIMPLE3DTRANSFROM));
 
 	LightManager::Instance().SetAmbientColor( Vector4f( 0.2f, 0.2f, 0.2f, 1 ) );
-	LightManager::Instance().SetDirection( Vector3f( 0, 1, 0 ) );
+	Vector3f dir( 0, -1, 15 );	
+	dir.Normalize();
+	LightManager::Instance().SetDirection( dir );
 	LightManager::Instance().SetDirectionalColor( Vector4f( 1, 1, 0, 1 ) );
 
 	TransformNode* node = NULL;
 	Camera *camera = renderer.GetCamera();
 	camera->SetViewPort( windowWidth, windowHeight );
 	node = camera->GetTransformNode();
-	node->SetOrigin( Vector3f( 0, -10, 10 ) );
-	node->SetPitchDeltaAngle( -45.0f );
-
-	Cube *cubeA = renderer.CreateCube();
+ 	node->SetOrigin( Vector3f( 0, -20, 5 ) );
+   	node->SetPitchDeltaAngle( -45.0f );	
+		
+	cubeA = renderer.CreateCube();
 	renderer.AddRenderItem( cubeA );
 
-	Cube *cubeB = renderer.CreateCube();
+	cubeB = renderer.CreateCube();
 	renderer.AddRenderItem( cubeB );
 
 	node = cubeA->GetTransformNode();
 
-	node->SetScale( Vector3f(1,1,1) );
- //	node->SetYawDeltaAngle( 0.0f );
+	node->SetScale( Vector3f( 2, 2, 2 ) ); 
 	node->SetOrigin( Vector3f( 0,0,0 ) );
+//	transformCubeB._matrixA = *node->GetWorldMatrix();
 
-	node = cubeB->GetTransformNode();
+ 	node = cubeB->GetTransformNode();
+ 
+ 	node->SetScale( Vector3f(1,1,1) );
+ 	node->SetOrigin( Vector3f( 0, 5, 5 ) );
 
-	node->SetScale( Vector3f(1,1,1) );
-//	node->SetYawDeltaAngle( 0.0f );
-	node->SetOrigin( Vector3f( 0, 5, 5 ) );
+	TransformNode *nodeA = cubeA->GetTransformNode();
+	TransformNode *nodeB = cubeB->GetTransformNode();
+
+	const Vector3f *nodeBPos = nodeB->GetOrigin();
+	const Vector3f *nodeAPos = nodeA->GetOrigin();
+
+	Vector3f distance = *nodeB->GetOrigin() - *nodeA->GetOrigin();
+	float length = distance.Length();
+//	Vector3f nodeAUp;
+//	nodeA->GetUpVector( nodeAUp );		
+
+	transformCubeB._vectorBA = distance;
+//	distance.Normalize();
+	Vector3f axis;// = distance.Cross( nodeAUp );
+
+	nodeA->GetRightVector( axis );
+	transformCubeB._axis = axis;
+	transformCubeB._angle = 0;	
 
 
 	// Main message loop:
-	while (GetMessage(&msg, NULL, 0, 0))
+// 	while (GetMessage(&msg, NULL, 0, 0))
+// 	{
+// 		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+// 		{
+// 			Update();	
+// 			TranslateMessage(&msg);
+// 			DispatchMessage(&msg);
+// 		}
+// 	}
+	
+	memset(&msg,0,sizeof(msg));
+
+	// Main message loop:
+	while( msg.message != WM_QUIT )
 	{
-		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
+		if( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )
 		{
-			renderer.Update();
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			TranslateMessage( &msg );
+			DispatchMessage( &msg );
+		}
+		else
+		{
+			Update();
 		}
 	}
 
@@ -97,7 +147,29 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	return (int) msg.wParam;
 }
 
+void Update()
+{
+	Renderer &renderer = Renderer::Instance();	
+	
+	TransformNode *nodeA = cubeA->GetTransformNode();
+	TransformNode *nodeB = cubeB->GetTransformNode();
+	
+ 	Quaternionf transformQuaterrnion;
+ 
+ 	transformCubeB._angle += 1.0f;
+ 	transformQuaterrnion.fromAngleAxis( transformCubeB._angle, transformCubeB._axis );
+ 	Vector3f finalPosition = transformQuaterrnion.TransformVector3D( transformCubeB._vectorBA );
+// 	Matrix4x4f transformMatrix = transformCubeB._matrixA;
+// 	Vector3f rightVector(transformMatrix.GetItems()[0],transformMatrix.GetItems()[1],transformMatrix.GetItems()[2]);
+// 	transformMatrix.RotateAxis( rightVector, transformCubeB._angle );
 
+//	Vector3f finalPosition = transformMatrix.TransformVector( transformCubeB._vectorBA );
+	nodeB->SetOrigin( finalPosition );
+
+	nodeA->SetYawDeltaAngle( 5.0f );
+	
+	renderer.Update();
+}
 
 //
 //  FUNCTION: MyRegisterClass()
@@ -203,7 +275,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
-		// TODO: Add any drawing code here...
+		// TODO: Add any drawing code here...		
 		EndPaint(hWnd, &ps);
 		break;
 	case WM_DESTROY:

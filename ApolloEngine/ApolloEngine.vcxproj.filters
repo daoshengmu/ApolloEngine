@@ -96,6 +96,9 @@
     <ClInclude Include="glError.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="core\Utility.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

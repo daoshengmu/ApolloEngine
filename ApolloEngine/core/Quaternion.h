@@ -78,6 +78,69 @@ public:
 
 		return (*this);
 	}
+
+	Quaternion<Type>& operator = ( const Quaternion<Type> &rhs )
+	{
+		x = rhs.x;
+		y = rhs.y;
+		z = rhs.z;
+		w = rhs.w;
+
+		return *(this);
+	}
+		
+	Quaternion<Type> operator * ( const Quaternion<Type>& q ) const
+	{    
+		return Quaternion<Type>( y * q.z - z * q.y + x * q.w + w * q.x,
+			z * q.x - x * q.z + y * q.w + w * q.y,
+			x * q.y - y * q.x + z * q.w + w * q.z,
+			w * q.w - x * q.x - y * q.y - z * q.z );
+	} 
+
+// 	void RotateAroundAxis( const Vector3<Type> &axis, Type angle )
+// 	{
+// 		w = cos(angle/2);
+// 		x = ( axis.x * sin(angle/2));
+// 		y = ( axis.y * sin(angle/2));
+// 		z = ( axis.z * sin(angle/2));
+// 	}
+
+	Quaternion<Type>& fromAngleAxis( Type angle, const Vector3<Type>& axis)
+	{
+		const Type fHalfAngle = DEGREE_TO_RADIAN( 0.5f * angle );
+		const Type fSin = sinf(fHalfAngle);
+		w = cosf(fHalfAngle);
+		x = fSin*axis.x;
+		y = fSin*axis.y;
+		z = fSin*axis.z;
+
+		return *this;
+	}
+
+	void Inverse()
+	{
+		Type d = x*x + y*y + z*z + w*w;    
+
+		Type inv = 1 / d;
+
+		x = -x * inv;
+		y = -y * inv;
+		z = -z * inv;
+		w =  w * inv;    
+	}
+
+	Vector3<Type> TransformVector3D(const Vector3<Type>& v) const
+	{
+		Quaternion<Type> inv(x, y, z, w);
+		inv.Inverse();
+
+		Quaternion<Type> input(v.x, v.y, v.z, 0);
+
+		Quaternion<Type> output = (*this) * input * inv;
+
+		return Vector3<Type>(output.x, output.y, output.z);
+	}
+	
 };
 
 }

@@ -96,15 +96,4 @@ TransformNode* Camera::GetTransformNode()
 	return &_transformNode;
 }
 
-// 
-// const Vector3f* Camera::GetOrigin()
-// {
-// 	return _transformNode.GetOrigin();
-// }
-// 
-// void Camera::SetOrigin( const Vector3f& origin )
-// {
-// 	_transformNode.SetOrigin( origin );
-// }
-
 }

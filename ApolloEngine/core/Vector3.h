@@ -25,13 +25,35 @@ public:
 		return *(this);
 	}
 
-	Vector3<Type> operator *= ( Type val )
+	Vector3<Type>& operator *= ( Type val )
 	{
 		x *= val;
 		y *= val;
 		z *= val;
 		
 		return (*this);
+	}
+
+	bool operator == ( const Vector3<Type>& rhs ) const
+	{
+		if ( x == rhs.x &&
+			y == rhs.y &&
+			z == rhs.z )
+			return true;
+		else
+			return false;    
+	}
+
+	Vector3<Type> operator - ( const Vector3<Type>& rhs ) const	
+	{
+		return Vector3<Type>( x - rhs.x, y - rhs.y, z - rhs.z );
+	}
+	
+	Vector3<Type> Cross( const Vector3<Type>& rhs ) const
+	{
+		return Vector3<Type>( y * rhs.z - z * rhs.y,
+			z * rhs.x - x * rhs.z,
+			x * rhs.y - y * rhs.x );
 	}
 
 	Type Length()

@@ -122,6 +122,68 @@ public:
 		return _items;
 	}
 
+	bool RotateAxis( const Vector3<Type>& axis, Type angle )
+	{
+		if ( axis == Vector3<Type>( 0, 0, 0) )
+			return false;
+				
+		angle = DEGREE_TO_RADIAN(angle);
+
+		Type fSin = sin( angle );
+		Type fCos = cos( angle );
+
+		Matrix4x4<Type> rotateMat;
+		Type* pEntries = rotateMat.GetItems();
+
+		Type KxKx = axis.x * axis.x;
+		Type KxKy = axis.x * axis.y;
+		Type KxKz = axis.x * axis.z;
+		Type KzS  = axis.z * fSin;
+		Type KyS  = axis.y * fSin;
+		Type KxS  = axis.x * fSin;
+		Type KyKz = axis.y * axis.z;
+		Type KzKz = axis.z * axis.z;
+		Type KyKy = axis.y * axis.y;
+		Type C  = 1 - fCos;
+
+		pEntries[0*4+0] = KxKx * C + fCos;
+		pEntries[0*4+1] = KxKy * C + KzS;
+		pEntries[0*4+2] = KxKz * C - KyS;
+		pEntries[0*4+3] = 0;
+
+		pEntries[1*4+0] = KxKy * C - KzS;
+		pEntries[1*4+1] = KyKy * C + fCos;
+		pEntries[1*4+2] = KyKz * C + KxS;
+		pEntries[1*4+3] = 0;
+
+		pEntries[2*4+0] = KxKz * C + KyS;
+		pEntries[2*4+1] = KyKz * C - KxS;
+		pEntries[2*4+2] = KzKz * C + fCos;
+		pEntries[2*4+3] = 0;
+
+		(*this) *= rotateMat;
+		return true;
+	}
+
+	Vector3<Type> TransformVector( const Vector3<Type>& vec ) const
+	{
+		Type x,y,z;
+
+		x = vec.x * _items[0*4+0] +
+			vec.y * _items[1*4+0] +
+			vec.z * _items[2*4+0];
+
+		y = vec.x * _items[0*4+1] +
+			vec.y * _items[1*4+1] +
+			vec.z * _items[2*4+1];
+
+		z = vec.x * _items[0*4+2] +
+			vec.y * _items[1*4+2] +
+			vec.z * _items[2*4+2];    
+
+		return Vector3<Type>(x,y,z);
+	} // End of TransformVector for cXEMatrix4x4
+
 	void MatrixToSRT( Vector3<Type>& Scale, 
 		Quaternion<Type>& Rotate,
 		Vector3<Type>& Translate  )

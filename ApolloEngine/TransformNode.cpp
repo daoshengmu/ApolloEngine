@@ -119,4 +119,27 @@ void TransformNode::GetRightVector( Vector3f& vec )
 	}
 }
 
+void TransformNode::GetLookVector( Vector3f& vec )
+{
+	vec.x = _rotateMatrix.GetItems()[ 4 ];
+	vec.y = _rotateMatrix.GetItems()[ 5 ];
+	vec.z = _rotateMatrix.GetItems()[ 6 ];
+
+	if ( vec.Length() != 1.0 )
+	{
+		vec.Normalize();
+	}
+}
+
+
+// void TransformNode::RotateAroundAxis( const Vector3f& axis, float angle, float dist )
+// {
+// 	//_rotateMatrix.
+//  	_quaternion.RotateAroundAxis( axis, angle );
+//  	_rotateMatrix = _quaternion.ConvertToMatrix4();
+// 
+// 	dist = 
+// 
+// }
+
 }

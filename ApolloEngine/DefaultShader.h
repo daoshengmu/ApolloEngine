@@ -25,7 +25,7 @@ public:
 
 			"varying vec4 outEyeVec; \n"
 			"varying vec3 outNormal; \n"
-			"varying vec2 outTexcoord; \n"
+		//	"varying vec2 outTexcoord; \n"
 			"\n"
 			"void main(void) \n"
 			"{ \n"
@@ -46,13 +46,13 @@ public:
 			"{ \n"
 			" vec3 color; \n"
 			" vec3 normal = normalize( outNormal ); \n"
-			" vec4 half = normalize( g_sunlightDir + outEyeVec ); \n"
+			" vec4 halfVector = normalize( g_sunlightDir + outEyeVec ); \n"
 			" float diff = dot( normal, g_sunlightDir.xyz ); \n"
 			" diff = min( max( 0.0, diff ), 1.0); \n"
-			" float spec = dot( normal, half.xyz ); \n"
-			" spec = min( max( 0.0, spec ), 1.0 ); \n"
-			" spec = pow( spec, g_sunlightColor.w ); \n" 		
-			" color = g_sunlightAmbient.xyz + ( g_sunlightColor.xyz * (diff + spec)  ); \n"
+ 			" float spec = dot( normal, halfVector.xyz ); \n"
+ 			" spec = min( max( 0.0, spec ), 1.0 ); \n"
+ 			" spec = pow( spec, g_sunlightColor.w ); \n" 		
+			" color = g_sunlightAmbient.xyz + ( g_sunlightColor.xyz * (diff+spec)  ); \n"
 			" gl_FragColor = vec4( color.x, color.y, color.z, 1.0); \n"
 			"} \n";
 	}

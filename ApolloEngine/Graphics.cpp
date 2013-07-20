@@ -23,6 +23,7 @@ VertexElement ElementDecl_POS_COLOR_NORMAL[] =
 { 
 	{ 0, 3, GL_FLOAT, GL_FALSE, 12, 48 },
 	{ 1, 4, GL_FLOAT, GL_FALSE, 16, 48 }, 
+	{ 2, 2, GL_FLOAT, GL_FALSE, 8, 48 },
 	{ 3, 3, GL_FLOAT, GL_FALSE, 12, 48 }
 };
 
@@ -131,10 +132,16 @@ bool Graphics::Initialize( HWND hWnd, UINT width, UINT height, bool bFullScreen 
 	} // End of if-bFullScreen
 
 	SetViewPort( 0, 0, width, height );
-	glEnable( GL_CULL_FACE );
-	glFrontFace( GL_CCW );
-	glCullFace( GL_BACK );
-//	glDisable(GL_CULL_FACE);
+  	glEnable( GL_CULL_FACE );
+  	glFrontFace( GL_CCW );
+  	glCullFace( GL_BACK );
+ 	//glDisable(GL_CULL_FACE);
+	
+	GLUnurbs *nurbs = gluNewNurbsRenderer();
+	GLfloat knots[8] = { 0,0,0,0,1,1,1,1};
+
+	gluEndCurve(nurbs);
+
 	return true; 
 
 }

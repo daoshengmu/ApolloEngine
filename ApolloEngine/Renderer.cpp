@@ -16,6 +16,9 @@ void Renderer::Initialize( HWND handle, UINT width, UINT height )
 
 void Renderer::Update()
 {
+	if ( !_pGraphics )
+		return;
+
 	_pGraphics->SetCamera( &_camera );
 	_pGraphics->ClearColor( _clearColor );
 
