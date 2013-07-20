@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ApolloEngine", "ApolloEngine\ApolloEngine.vcxproj", "{B60E3AAC-CC42-490D-B8EB-C8DC5179F3EC}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Simple3DTransfrom", "Simple3DTransfrom\Simple3DTransfrom.vcxproj", "{9797175D-AD25-4671-AF2D-2A3058FE9E60}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B60E3AAC-CC42-490D-B8EB-C8DC5179F3EC} = {B60E3AAC-CC42-490D-B8EB-C8DC5179F3EC}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B60E3AAC-CC42-490D-B8EB-C8DC5179F3EC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B60E3AAC-CC42-490D-B8EB-C8DC5179F3EC}.Debug|Win32.Build.0 = Debug|Win32
+		{B60E3AAC-CC42-490D-B8EB-C8DC5179F3EC}.Release|Win32.ActiveCfg = Release|Win32
+		{B60E3AAC-CC42-490D-B8EB-C8DC5179F3EC}.Release|Win32.Build.0 = Release|Win32
+		{9797175D-AD25-4671-AF2D-2A3058FE9E60}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9797175D-AD25-4671-AF2D-2A3058FE9E60}.Debug|Win32.Build.0 = Debug|Win32
+		{9797175D-AD25-4671-AF2D-2A3058FE9E60}.Release|Win32.ActiveCfg = Release|Win32
+		{9797175D-AD25-4671-AF2D-2A3058FE9E60}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
