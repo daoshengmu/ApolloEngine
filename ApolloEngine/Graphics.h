@@ -19,6 +19,7 @@ public:
 	void ClearColor( const Vector4<float> &color );
 	void CreateBuffer( const float* vertexData, const uint16* indexData, Surface* pSurface );
 	Program CreateProgram( const std::string& vertexShaderStr, const std::string& fragShaderStr );
+	void SetViewPort( uint x, uint y, uint w, uint h ); 
 	void SetVertexDeclaration( EVertexDecl vtxDclType );
 	void SetVertexBufferAt( int index, VertexBuffer buffer );
 	void SetProgram( Program program );
@@ -40,6 +41,7 @@ private:
 	Matrix4x4f _viewProjMatrix;
 	Matrix4x4f _worldViewMatrix;
 	Matrix4x4f _viewMatrix;
+	Vector3f   _eyePosition;
 
 };
 

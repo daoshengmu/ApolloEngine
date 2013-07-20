@@ -14,8 +14,8 @@ TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
 TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
 
 using namespace Apollo;
-const UINT windowWidth = 640;
-const UINT windowHeight = 480;
+const UINT windowWidth = 1024;
+const UINT windowHeight = 768;
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -55,12 +55,31 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	LightManager::Instance().SetDirection( Vector3f( 0, 1, 0 ) );
 	LightManager::Instance().SetDirectionalColor( Vector4f( 1, 1, 0, 1 ) );
 
+	TransformNode* node = NULL;
 	Camera *camera = renderer.GetCamera();
 	camera->SetViewPort( windowWidth, windowHeight );
-	camera->SetOrigin( Vector3f( 0, -100, 0 ) );
-	
+	node = camera->GetTransformNode();
+	node->SetOrigin( Vector3f( 0, -10, 10 ) );
+	node->SetPitchDeltaAngle( -45.0f );
+
 	Cube *cubeA = renderer.CreateCube();
 	renderer.AddRenderItem( cubeA );
+
+	Cube *cubeB = renderer.CreateCube();
+	renderer.AddRenderItem( cubeB );
+
+	node = cubeA->GetTransformNode();
+
+	node->SetScale( Vector3f(1,1,1) );
+ //	node->SetYawDeltaAngle( 0.0f );
+	node->SetOrigin( Vector3f( 0,0,0 ) );
+
+	node = cubeB->GetTransformNode();
+
+	node->SetScale( Vector3f(1,1,1) );
+//	node->SetYawDeltaAngle( 0.0f );
+	node->SetOrigin( Vector3f( 0, 5, 5 ) );
+
 
 	// Main message loop:
 	while (GetMessage(&msg, NULL, 0, 0))

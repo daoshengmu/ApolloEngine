@@ -24,6 +24,7 @@ void Renderer::Update()
 	for ( uint i = 0; i < size; ++i )
 	{
 		item = _renderItemList[i];
+		item->Update();
 
 		_pGraphics->Draw( item->GetSurface() );
 	}

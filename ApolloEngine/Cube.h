@@ -8,8 +8,9 @@ namespace Apollo
 class Cube : public RenderItem
 {
 public:
-
 	Cube();
+	TransformNode* GetTransformNode();
+	virtual void Update();
 
 private:
 	static bool bInit;

@@ -253,9 +253,8 @@ public:
 
 		return *this;
 	}
-
-private:
-	Matrix4x4<Type>& GetIdentity()
+	
+	static Matrix4x4<Type>& GetIdentity()
 	{
 		static Matrix4x4<Type> identity( 1, 0, 0, 0,
 										0, 1, 0, 0,

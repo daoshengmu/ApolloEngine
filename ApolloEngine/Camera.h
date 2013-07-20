@@ -20,9 +20,7 @@ public:
 	void SetViewPort( float width, float height );
 	const Matrix4x4f* GetViewMatrix();
 	const Matrix4x4f* GetProjectionMatrix();	
-	void SetOrigin( const Vector3f& origin );
-	const Vector3f* GetOrigin();
-	
+	TransformNode* GetTransformNode();	
 
 private:
 	TransformNode _transformNode;

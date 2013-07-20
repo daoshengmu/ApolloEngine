@@ -78,4 +78,14 @@ Cube::Cube()
 	}
 }
 
+TransformNode* Cube::GetTransformNode()
+{
+	return _transformNode;
+}
+
+void Cube::Update()
+{
+	_transformNode->UpdateMatrix();
+}
+
 }

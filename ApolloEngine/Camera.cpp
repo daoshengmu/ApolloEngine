@@ -6,7 +6,7 @@ namespace Apollo
 {
 
 Camera::Camera()
-	: _fovX( 90.0f ), _fovY( 73.74f ), _near( 1.0f ), _far( 4000.f ),
+	: _fovX( 90.0f ), _fovY( 73.74f ), _near( 4.0f ), _far( 1000.f ),
 	  _viewPortW(0), _viewPortH(0)
 {
 // 	_transformNode.SetWorldMatrix( Matrix4x4f(
@@ -91,14 +91,20 @@ void Camera::SetViewPort( float width, float height )
 	_viewPortH = height;
 }
 
-const Vector3f* Camera::GetOrigin()
+TransformNode* Camera::GetTransformNode()
 {
-	return _transformNode.GetOrigin();
+	return &_transformNode;
 }
 
-void Camera::SetOrigin( const Vector3f& origin )
-{
-	_transformNode.SetOrigin( origin );
-}
+// 
+// const Vector3f* Camera::GetOrigin()
+// {
+// 	return _transformNode.GetOrigin();
+// }
+// 
+// void Camera::SetOrigin( const Vector3f& origin )
+// {
+// 	_transformNode.SetOrigin( origin );
+// }
 
 }

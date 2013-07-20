@@ -16,6 +16,7 @@ public:
 	RenderItem() :_surface(NULL) {}
 	//void Initialize( std::vector<float> vertices, std::vector<float> indices );
 	Surface* GetSurface();
+	virtual void Update() = 0;
 
 protected:
 	uint		 _numVertics;

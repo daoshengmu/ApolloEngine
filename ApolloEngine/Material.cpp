@@ -6,7 +6,6 @@
 namespace Apollo
 {
 
-
 Program Material::GetProgram()
 {
 	return _program;

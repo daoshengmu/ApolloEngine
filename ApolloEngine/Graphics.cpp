@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "Graphics.h"
 #include "Surface.h"
-#include "glew.h"
+#include "glError.h"
 #include <assert.h>
 #include "LightManager.h"
 
@@ -130,10 +130,11 @@ bool Graphics::Initialize( HWND hWnd, UINT width, UINT height, bool bFullScreen 
 		}
 	} // End of if-bFullScreen
 
+	SetViewPort( 0, 0, width, height );
 	glEnable( GL_CULL_FACE );
 	glFrontFace( GL_CCW );
 	glCullFace( GL_BACK );
-
+//	glDisable(GL_CULL_FACE);
 	return true; 
 
 }
@@ -144,6 +145,7 @@ void Graphics::ClearColor( const Vector4f &color )
 	glClearColor( color.x, color.y, color.z, color.w );
 	glClearDepth( 1.0f );
 	glClearStencil( 0 );
+	CheckForErrors();
 }
 
 void Graphics::Terminate()
@@ -154,6 +156,7 @@ void Graphics::Terminate()
 void Graphics::EndFrame()
 {
 	SwapBuffers( _glDev );
+	CheckForErrors();
 }
 
 void Graphics::CreateBuffer( const float* vertexData, const uint16* indexData, Surface* pSurface )
@@ -164,19 +167,27 @@ void Graphics::CreateBuffer( const float* vertexData, const uint16* indexData, S
 	uint vertexSize = pSurface->GetVertexSize();
 	uint numIndices = pSurface->GetNumIndices();
 
+	bool check = CheckForErrors();
+
 	glGenBuffers( 1, &vertexBuffer );
+	 check = CheckForErrors();
 	glBindBuffer( GL_ARRAY_BUFFER, vertexBuffer );
-	glBufferData( GL_ARRAY_BUFFER, numVertices * vertexSize, NULL, GL_DYNAMIC_DRAW );
+	 check = CheckForErrors();
+	glBufferData( GL_ARRAY_BUFFER, numVertices * vertexSize, vertexData, GL_DYNAMIC_DRAW );
+	 check = CheckForErrors();
 	
 	IndexBuffer indexBuffer;
 	
 	glGenBuffers( 1, &indexBuffer );
+	 check = CheckForErrors();
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, indexBuffer );
-	glBufferData( GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof( uint16 ), NULL, GL_DYNAMIC_DRAW );
+	 check = CheckForErrors();
+	glBufferData( GL_ELEMENT_ARRAY_BUFFER, numIndices * sizeof( uint16 ), indexData, GL_DYNAMIC_DRAW );
+	 check = CheckForErrors();
 	
 	pSurface->SetVertexBuffer( vertexBuffer );
 	pSurface->SetIndexBuffer( indexBuffer );
-	
+
 }
 
 Program Graphics::CreateProgram( const std::string& vertexShaderStr, const std::string& fragShaderStr )
@@ -188,12 +199,18 @@ Program Graphics::CreateProgram( const std::string& vertexShaderStr, const std::
 
 	shaderData = vertexShaderStr.c_str();
 	vertexShader = glCreateShader( GL_VERTEX_SHADER );
+    CheckForErrors();
 	glShaderSource( vertexShader, 1, &shaderData, NULL );
+	CheckForErrors();
 	glCompileShader( vertexShader );
+	CheckForErrors();
 	fragmentShader = glCreateShader( GL_FRAGMENT_SHADER );
+	CheckForErrors();
 	shaderData = fragShaderStr.c_str();
 	glShaderSource( fragmentShader, 1, &shaderData, NULL );
+	CheckForErrors();
 	glCompileShader( fragmentShader );
+	CheckForErrors();
 	GLint isCompiled = 0;
 	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &isCompiled);
 	if(isCompiled == GL_FALSE)
@@ -272,16 +289,19 @@ Program Graphics::CreateProgram( const std::string& vertexShaderStr, const std::
 void Graphics::SetProgramConstantsFromMatrix( int firstRegister, const Matrix4x4f &matrix )
 { 
 	glUniformMatrix4fv( firstRegister, 1, GL_FALSE, matrix.GetItems() );
+	bool check = CheckForErrors();
 }
 
 void Graphics::SetProgramConstantsFromVector( int firstRegister, const Vector4f &vector )
 {
 	glUniform4fv( firstRegister, 1, (GLfloat *)(&vector) );
+	bool check = CheckForErrors();
 }
 
 void Graphics::SetProgram( Program program )
 {
 	glUseProgram( program );
+	bool check = CheckForErrors();
 }
 
 void Graphics::SetVertexDeclaration( EVertexDecl vtxDclType )
@@ -296,6 +316,7 @@ void Graphics::SetVertexDeclaration( EVertexDecl vtxDclType )
 	{ 
 		glVertexAttribPointer( element[i].reg, element[i].numComp, element[i].dataFormat, element[i].normalized, element[i].totalStride, (GLvoid *)offset );
 		glEnableVertexAttribArray( element[i].reg );
+		bool check = CheckForErrors();
 		offset += element[i].compSize;
 	}
 }
@@ -303,25 +324,29 @@ void Graphics::SetVertexDeclaration( EVertexDecl vtxDclType )
 void Graphics::SetVertexBufferAt( int index, VertexBuffer buffer )
 {
 	glBindBuffer( GL_ARRAY_BUFFER, buffer ); 
+	bool check = CheckForErrors();
 }
 
 void Graphics::DrawTriangles( IndexBuffer indexBuffer, uint numIndices )
 { 
 	// Set index buffer 
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, indexBuffer );
+	bool check = CheckForErrors();
 	
 	// Draw triangles
 	glDrawElements( GL_TRIANGLES, numIndices, GL_UNSIGNED_SHORT, 0 ); 
+	 check = CheckForErrors();
 }
 
 void Graphics::Draw( const Surface *surf )
 {
 	const Material *pMaterial = surf->GetMaterial();
 	const Matrix4x4f *pWorldMtx = surf->GetWorldMatrix();
-	Matrix4x4f transposedMatrix;
+	//Matrix4x4f transposedMatrix;
 
 	this->SetProgram( pMaterial->GetProgram() );
 		
+	this->SetProgramConstantsFromVector( 0, Vector4f( _eyePosition.x, _eyePosition.y, _eyePosition.z, 1.0f ) );
 	// Set light parameters to shader
 	const Vector4f *color = LightManager::Instance().GetAmbientColor();
 	this->SetProgramConstantsFromVector( 1, *color );
@@ -337,8 +362,8 @@ void Graphics::Draw( const Surface *surf )
 		_worldViewProjMatrix = *pWorldMtx;
 		_worldViewProjMatrix *= _viewProjMatrix;
 
-		transposedMatrix.AssignTranspose( _worldViewProjMatrix );
-		this->SetProgramConstantsFromMatrix( 5, transposedMatrix ); // mvp mtx
+	//	transposedMatrix.AssignTranspose( _worldViewProjMatrix );
+		this->SetProgramConstantsFromMatrix( 5, _worldViewProjMatrix ); // mvp mtx 5
 
 		_worldViewMatrix = *pWorldMtx; 
 		_worldViewMatrix *= _viewMatrix; // world-view mtx 		
@@ -346,19 +371,19 @@ void Graphics::Draw( const Surface *surf )
 	}
 	else
 	{
-		transposedMatrix.AssignTranspose( _viewProjMatrix );
-		this->SetProgramConstantsFromMatrix( 5, transposedMatrix ); // mvp mtx
+//		transposedMatrix.AssignTranspose( _viewProjMatrix );
+		this->SetProgramConstantsFromMatrix( 5, _viewProjMatrix ); // mvp mtx 5
 	}
 
 	if ( pWorldMtx )
 	{ 		
-		transposedMatrix.AssignTranspose( *pWorldMtx );
-		this->SetProgramConstantsFromMatrix( 4, transposedMatrix );		
+		//transposedMatrix.AssignTranspose( *pWorldMtx );
+		this->SetProgramConstantsFromMatrix( 4, *pWorldMtx );		
 	} 
 	else
 	{		
-		transposedMatrix.SetIdentity();
-		this->SetProgramConstantsFromMatrix( 4, transposedMatrix );		
+		//transposedMatrix.SetIdentity();
+		this->SetProgramConstantsFromMatrix( 4, Matrix4x4f::GetIdentity() );		
 	}
 
 	this->SetVertexBufferAt( 0, surf->GetVertexBuffer() );
@@ -374,8 +399,14 @@ void Graphics::SetCamera( Camera *pCamera )
 	_viewProjMatrix = _viewMatrix;
 	_viewProjMatrix *= *pProj;
 
-	const Vector3f *eyePosition = pCamera->GetOrigin();
-	this->SetProgramConstantsFromVector( 0, Vector4f( eyePosition->x, eyePosition->y, eyePosition->z, 1.0f ) );
+	const Vector3f *eyePosition = pCamera->GetTransformNode()->GetOrigin();
+	_eyePosition = *eyePosition;	
+}
+
+void Graphics::SetViewPort( uint x, uint y, uint width, uint height )
+{
+	glViewport( (GLint)x, (GLint)y, (GLsizei)width, (GLsizei)height );
+	CheckForErrors();
 }
 
 }

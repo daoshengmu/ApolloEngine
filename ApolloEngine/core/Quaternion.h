@@ -59,6 +59,25 @@ public:
 		return out;
 	}
 
+	Quaternion& operator *= ( const Quaternion<Type>& q )
+	{
+		Type X,Y,Z,W;
+
+		X = y * q.z - z * q.y + x * q.w + w * q.x;
+
+		Y = z * q.x - x * q.z + y * q.w + w * q.y;
+
+		Z = x * q.y - y * q.x + z * q.w + w * q.z;
+
+		W = w * q.w - x * q.x - y * q.y - z * q.z;
+
+		x = X;
+		y = Y;
+		z = Z;
+		w = W;
+
+		return (*this);
+	}
 };
 
 }

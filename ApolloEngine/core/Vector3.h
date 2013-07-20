@@ -34,6 +34,26 @@ public:
 		return (*this);
 	}
 
+	Type Length()
+	{
+		Type sum = x * x + y * y + z * z;
+		return sqrt( sum );
+	}
+
+	void Normalize()
+	{
+		Type length = Length();    
+
+		if (length != 0)
+		{
+			Type inv = 1 / length;
+
+			x *= inv;
+			y *= inv;
+			z *= inv;    
+		}
+	}
+
 };
 
 }
