@@ -22,7 +22,7 @@ ATOM				MyRegisterClass(HINSTANCE hInstance);
 BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
-void Update( const Vector3f& distanceBA );
+void Update( const Vector3f& distanceBA, TransformNode* trans );
 
 Cube *cubeA = NULL;
 Cube *cubeB = NULL;
@@ -68,7 +68,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	node = camera->GetTransformNode();
 	node->SetOrigin( Vector3f( 0, -25, 3 ) );
 	node->SetPitchDeltaAngle( -45.0f );	
-
+	
 	cubeA = renderer.CreateCube();
 	renderer.AddRenderItem( cubeA );
 
@@ -87,11 +87,19 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	TransformNode *nodeA = cubeA->GetTransformNode();
 	TransformNode *nodeB = cubeB->GetTransformNode();
+	
+	TransformNode transformNode = ( *nodeA );
+	transformNode.SetYawDeltaAngle( 45.0f );
+	transformNode.SetPitchDeltaAngle( 45.0f );
 
 	const Vector3f *nodeBPos = nodeB->GetOrigin();
 	const Vector3f *nodeAPos = nodeA->GetOrigin();
 
 	Vector3f distance = *nodeB->GetOrigin() - *nodeA->GetOrigin();	
+
+	transformNode.GetRightVector( distance );
+
+	distance *= 5.0f;
 
 	memset(&msg,0,sizeof(msg));
 
@@ -105,7 +113,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		}
 		else
 		{
-			Update( distance );
+			Update( distance, &transformNode );
 		}
 	}
 
@@ -114,23 +122,24 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	return (int) msg.wParam;
 }
 
-void Update( const Vector3f& distanceBA )
+void Update( const Vector3f& distanceBA, TransformNode* transformNode )
 {
 	Renderer &renderer = Renderer::Instance();	
 
 	TransformNode *nodeA = cubeA->GetTransformNode();
 	TransformNode *nodeB = cubeB->GetTransformNode();	
 
+	static float angle = 0.0f;
+	angle += 1.0f;
+
 	Matrix4x4f transformMtx;
-
 	transformMtx.Translate( distanceBA );
+	transformNode->SetYawDeltaAngle( 3.0f );
 
-	const Matrix4x4f *pRotate = nodeA->GetRotateMatrix();
-
-	transformMtx *= (*pRotate);
+	const Matrix4x4f *rotateMatrix = transformNode->GetRotateMatrix();	
+	transformMtx *= *rotateMatrix;	
 
 	nodeB->SetWorldMatrix( transformMtx );
-
 	nodeA->SetYawDeltaAngle( 5.0f );
 
 	renderer.Update();
