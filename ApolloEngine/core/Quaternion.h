@@ -1,6 +1,22 @@
 
 #pragma once
 
+/**
+*
+* @file     Quaternion.h
+* @author   Daosheng Mu
+* @version  1.0
+*
+* @section  LICENSE
+*
+* (C) All rights reserved.
+*
+* @section	Description
+*
+* Matrix4x4 template
+*
+*/
+
 namespace Apollo
 {
 template <class Type>
@@ -13,6 +29,9 @@ public:
 	Type w;
 
 public:
+	//--------------------------------------------------------------------------------------
+	/// @brief Constructor
+	//--------------------------------------------------------------------------------------
 	Quaternion() :x(0), y(0), z(0), w(1) {}
 	Quaternion( const Quaternion<Type>& rhs )
 		:x(rhs.x),
@@ -21,6 +40,11 @@ public:
 		w(rhs.w)
 	{}
 
+	//--------------------------------------------------------------------------------------
+	/// @brief Constructor
+	/// 
+	/// @param [in] Type wanna assign to Quaternion
+	//--------------------------------------------------------------------------------------
 	Quaternion(  Type _x,  Type _y,  Type _z,  Type _w ) 
 		:x(_x),
 		y(_y),
@@ -30,6 +54,11 @@ public:
 
 	}
 
+	//--------------------------------------------------------------------------------------
+	/// @brief Convert quaternion to matrix4x4
+	/// 
+	/// @return Martix4x4
+	//--------------------------------------------------------------------------------------
 	Matrix4x4<Type> ConvertToMatrix4() const
 	{
 		Matrix4x4<Type> out;
@@ -59,6 +88,13 @@ public:
 		return out;
 	}
 
+	//--------------------------------------------------------------------------------------
+	/// @brief Multiply operator
+	/// 
+	/// @param [in] q Quaternion to multiply
+	/// 
+	/// @return Self
+	//--------------------------------------------------------------------------------------
 	Quaternion& operator *= ( const Quaternion<Type>& q )
 	{
 		Type X,Y,Z,W;
@@ -79,6 +115,13 @@ public:
 		return (*this);
 	}
 
+	//--------------------------------------------------------------------------------------
+	/// @brief Assign operator
+	/// 
+	/// @param [in] rhs Assign quaternion from rhs
+	/// 
+	/// @return Self
+	//--------------------------------------------------------------------------------------
 	Quaternion<Type>& operator = ( const Quaternion<Type> &rhs )
 	{
 		x = rhs.x;
@@ -89,6 +132,13 @@ public:
 		return *(this);
 	}
 		
+	//--------------------------------------------------------------------------------------
+	/// @brief Multiply operator
+	/// 
+	/// @param [in] q Quaternion to multiply
+	/// 
+	/// @return Quaternion
+	//--------------------------------------------------------------------------------------
 	Quaternion<Type> operator * ( const Quaternion<Type>& q ) const
 	{    
 		return Quaternion<Type>( y * q.z - z * q.y + x * q.w + w * q.x,
@@ -97,14 +147,15 @@ public:
 			w * q.w - x * q.x - y * q.y - z * q.z );
 	} 
 
-// 	void RotateAroundAxis( const Vector3<Type> &axis, Type angle )
-// 	{
-// 		w = cos(angle/2);
-// 		x = ( axis.x * sin(angle/2));
-// 		y = ( axis.y * sin(angle/2));
-// 		z = ( axis.z * sin(angle/2));
-// 	}
-
+	//--------------------------------------------------------------------------------------
+	/// @brief Setup quaternion from angle, axis
+	/// 
+	/// @param [in] angle Angle for Quaternion
+	///
+	/// @param [in] axis Axis for Quaternion
+	/// 
+	/// @return Self
+	//--------------------------------------------------------------------------------------
 	Quaternion<Type>& fromAngleAxis( Type angle, const Vector3<Type>& axis)
 	{
 		const Type fHalfAngle = DEGREE_TO_RADIAN( 0.5f * angle );
@@ -117,6 +168,9 @@ public:
 		return *this;
 	}
 
+	//--------------------------------------------------------------------------------------
+	/// @brief Inverse quaternion
+	//--------------------------------------------------------------------------------------
 	void Inverse()
 	{
 		Type d = x*x + y*y + z*z + w*w;    
@@ -129,6 +183,13 @@ public:
 		w =  w * inv;    
 	}
 
+	//--------------------------------------------------------------------------------------
+	/// @brief Transform vector from this quaternion
+	/// 
+	/// @param [in] v Vector wanna transform
+	/// 
+	/// @return Transformed vector
+	//--------------------------------------------------------------------------------------
 	Vector3<Type> TransformVector3D(const Vector3<Type>& v) const
 	{
 		Quaternion<Type> inv(x, y, z, w);

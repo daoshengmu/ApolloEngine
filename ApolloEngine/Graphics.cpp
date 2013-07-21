@@ -137,11 +137,6 @@ bool Graphics::Initialize( HWND hWnd, UINT width, UINT height, bool bFullScreen 
   	glCullFace( GL_BACK );
  	//glDisable(GL_CULL_FACE);
 	
-	GLUnurbs *nurbs = gluNewNurbsRenderer();
-	GLfloat knots[8] = { 0,0,0,0,1,1,1,1};
-
-	gluEndCurve(nurbs);
-
 	return true; 
 
 }
@@ -153,6 +148,18 @@ void Graphics::ClearColor( const Vector4f &color )
 	glClearDepth( 1.0f );
 	glClearStencil( 0 );
 	CheckForErrors();
+		
+// 	GLUnurbs *theNurb=gluNewNurbsRenderer();
+// 	gluNurbsProperty(theNurb,GLU_SAMPLING_TOLERANCE,10.0);
+// 	gluNurbsProperty(theNurb,GLU_DISPLAY_MODE,GLU_FILL);
+// 	GLfloat ctrlpoints[9][3] = {{1,0,0},{0.5,0.5,0},{0,4,0},{-0.5,0.5,0},
+// 	{-1,0,0},{-0.5,-0.5,0},{0,-4,0},{0.5,-0.5,0},
+// 	{1,0,0}};
+// 	GLfloat knots[12] = {1,2,3,4,5,6,7,8,9,10,11,12};
+// 	gluBeginCurve(theNurb);
+// 	gluNurbsCurve(theNurb,12,knots,3,&ctrlpoints[0][0],3,GL_MAP1_VERTEX_3);
+// 	gluEndCurve(theNurb);
+
 }
 
 void Graphics::Terminate()
@@ -272,6 +279,7 @@ Program Graphics::CreateProgram( const std::string& vertexShaderStr, const std::
 	 i = glGetUniformLocation( program, "g_sunlightDir" );
 	 i = glGetUniformLocation( program, "g_sunlightColor" );
 	 i = glGetUniformLocation( program, "g_sunlightAmbient" );	
+	 i = glGetUniformLocation( program, "g_materialColor" );
 
 	// Check for link success
 	GLint maxLength = 0;
@@ -348,29 +356,30 @@ void Graphics::DrawTriangles( IndexBuffer indexBuffer, uint numIndices )
 void Graphics::Draw( const Surface *surf )
 {
 	const Material *pMaterial = surf->GetMaterial();
+	const Vector4f *pMaterialColor = pMaterial->GetMaterialColor();
 	const Matrix4x4f *pWorldMtx = surf->GetWorldMatrix();
 	//Matrix4x4f transposedMatrix;
 
 	this->SetProgram( pMaterial->GetProgram() );
 		
 	this->SetProgramConstantsFromVector( 0, Vector4f( _eyePosition.x, _eyePosition.y, _eyePosition.z, 1.0f ) );
+	this->SetProgramConstantsFromVector( 1, Vector4f( pMaterialColor->x, pMaterialColor->y, pMaterialColor->z, pMaterialColor->w ) );
 	// Set light parameters to shader
 	const Vector4f *color = LightManager::Instance().GetAmbientColor();
-	this->SetProgramConstantsFromVector( 1, *color );
-	color = LightManager::Instance().GetDirectionalColor();
 	this->SetProgramConstantsFromVector( 2, *color );
+	color = LightManager::Instance().GetDirectionalColor();
+	this->SetProgramConstantsFromVector( 3, *color );
 	const Vector3f *dir = LightManager::Instance().GetDirection();
 	Vector4f lightDir( -dir->x, -dir->y , -dir->z, 1 );
-	this->SetProgramConstantsFromVector( 3, lightDir );
+	this->SetProgramConstantsFromVector( 4, lightDir );
 	// End of setting light
 
 	if ( pWorldMtx ) 
 	{		
 		_worldViewProjMatrix = *pWorldMtx;
 		_worldViewProjMatrix *= _viewProjMatrix;
-
-	//	transposedMatrix.AssignTranspose( _worldViewProjMatrix );
-		this->SetProgramConstantsFromMatrix( 5, _worldViewProjMatrix ); // mvp mtx 5
+	
+		this->SetProgramConstantsFromMatrix( 6, _worldViewProjMatrix ); // mvp mtx 5
 
 		_worldViewMatrix = *pWorldMtx; 
 		_worldViewMatrix *= _viewMatrix; // world-view mtx 		
@@ -378,19 +387,16 @@ void Graphics::Draw( const Surface *surf )
 	}
 	else
 	{
-//		transposedMatrix.AssignTranspose( _viewProjMatrix );
-		this->SetProgramConstantsFromMatrix( 5, _viewProjMatrix ); // mvp mtx 5
+		this->SetProgramConstantsFromMatrix( 6, _viewProjMatrix ); // mvp mtx 5
 	}
 
 	if ( pWorldMtx )
-	{ 		
-		//transposedMatrix.AssignTranspose( *pWorldMtx );
-		this->SetProgramConstantsFromMatrix( 4, *pWorldMtx );		
+	{ 				
+		this->SetProgramConstantsFromMatrix( 5, *pWorldMtx );		
 	} 
 	else
-	{		
-		//transposedMatrix.SetIdentity();
-		this->SetProgramConstantsFromMatrix( 4, Matrix4x4f::GetIdentity() );		
+	{				
+		this->SetProgramConstantsFromMatrix( 5, Matrix4x4f::GetIdentity() );		
 	}
 
 	this->SetVertexBufferAt( 0, surf->GetVertexBuffer() );

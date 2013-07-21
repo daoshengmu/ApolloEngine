@@ -41,7 +41,7 @@ void Surface::SetWorldMatrixRef( Matrix4x4f *pMatrix )
 	_worldMatrix = pMatrix;
 }
 
-const Material * Surface::GetMaterial() const
+Material * Surface::GetMaterial() const
 {
 	return _material;
 }
@@ -59,6 +59,20 @@ IndexBuffer Surface::GetIndexBuffer() const
 VertexBuffer Surface::GetVertexBuffer() const
 {
 	return _vertexBuffer;
+}
+
+void Surface::UploadVertexBuffer( const void*data, uint count, uint vertexSize )
+{
+	glBindBuffer( GL_ARRAY_BUFFER, _vertexBuffer );
+	glBufferData( GL_ARRAY_BUFFER, count * vertexSize, data, GL_DYNAMIC_DRAW );
+	glBindBuffer( GL_ARRAY_BUFFER, 0 );
+}
+
+void Surface::UploadIndexBuffer( const void*data, uint count )
+{
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, _indexBuffer );
+	glBufferData( GL_ELEMENT_ARRAY_BUFFER, count * sizeof( uint16 ), data, GL_DYNAMIC_DRAW );
+	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, 0 );
 }
 
 }

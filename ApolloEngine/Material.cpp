@@ -5,6 +5,11 @@
 
 namespace Apollo
 {
+	
+Material::Material() :_materialColor( 1,1,1,1)
+{
+
+}
 
 Program Material::GetProgram()
 {
@@ -14,6 +19,11 @@ Program Material::GetProgram()
 Program Material::GetProgram() const
 {
 	return _program;
+}
+
+const Vector4f* Material::GetMaterialColor() const
+{
+	return &_materialColor;
 }
 
 void Material::CreateProgram( const std::string& vertexShader, const std::string& fragmentShader )
@@ -29,6 +39,11 @@ void Material::SetVertexDeclaration( EVertexDecl type )
 EVertexDecl Material::GetVertexDeclaration() const
 {
 	return _vertexDecl;
+}
+
+void Material::SetMaterialColor( const Vector4f& color )
+{
+	_materialColor = color;
 }
 
 }

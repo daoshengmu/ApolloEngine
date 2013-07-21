@@ -4,12 +4,31 @@
 #include <assert.h>
 #include "glew.h"
 
+/**
+*
+* @file     glError.h
+* @author   Daosheng Mu
+* @version  1.0
+*
+* @section  LICENSE
+*
+* (C) All rights reserved.
+*
+* @section	Description
+*
+* Check OpenGL error
+*
+*/
+
 namespace Apollo
 {
 	bool CheckForErrors()
 	{
+#ifdef _DEBUG
 		static bool checkForErrors = true;
-
+#else
+		static bool checkForErrors = false;
+#endif
 		//
 		if( !checkForErrors )
 		{

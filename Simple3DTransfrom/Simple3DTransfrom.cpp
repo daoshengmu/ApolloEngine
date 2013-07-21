@@ -73,7 +73,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	TransformNode* node = NULL;
 	Camera *camera = renderer.GetCamera();
-	camera->SetViewPort( windowWidth, windowHeight );
+	camera->SetViewPort( (float)windowWidth, (float)windowHeight );
 	node = camera->GetTransformNode();
  	node->SetOrigin( Vector3f( 0, -20, 5 ) );
    	node->SetPitchDeltaAngle( -45.0f );	
@@ -102,29 +102,15 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	const Vector3f *nodeAPos = nodeA->GetOrigin();
 
 	Vector3f distance = *nodeB->GetOrigin() - *nodeA->GetOrigin();
-	float length = distance.Length();
-//	Vector3f nodeAUp;
-//	nodeA->GetUpVector( nodeAUp );		
+	float length = distance.Length();	
 
 	transformCubeB._vectorBA = distance;
-//	distance.Normalize();
-	Vector3f axis;// = distance.Cross( nodeAUp );
+
+	Vector3f axis;
 
 	nodeA->GetRightVector( axis );
 	transformCubeB._axis = axis;
 	transformCubeB._angle = 0;	
-
-
-	// Main message loop:
-// 	while (GetMessage(&msg, NULL, 0, 0))
-// 	{
-// 		if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
-// 		{
-// 			Update();	
-// 			TranslateMessage(&msg);
-// 			DispatchMessage(&msg);
-// 		}
-// 	}
 	
 	memset(&msg,0,sizeof(msg));
 
@@ -159,11 +145,7 @@ void Update()
  	transformCubeB._angle += 1.0f;
  	transformQuaterrnion.fromAngleAxis( transformCubeB._angle, transformCubeB._axis );
  	Vector3f finalPosition = transformQuaterrnion.TransformVector3D( transformCubeB._vectorBA );
-// 	Matrix4x4f transformMatrix = transformCubeB._matrixA;
-// 	Vector3f rightVector(transformMatrix.GetItems()[0],transformMatrix.GetItems()[1],transformMatrix.GetItems()[2]);
-// 	transformMatrix.RotateAxis( rightVector, transformCubeB._angle );
 
-//	Vector3f finalPosition = transformMatrix.TransformVector( transformCubeB._vectorBA );
 	nodeB->SetOrigin( finalPosition );
 
 	nodeA->SetYawDeltaAngle( 5.0f );

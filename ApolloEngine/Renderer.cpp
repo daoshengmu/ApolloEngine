@@ -67,6 +67,20 @@ Cube* Renderer::CreateCube()
 	return cube;
 }
 
+Square* Renderer::CreateSquare()
+{
+	Square *square = new Square();
+
+	return square;
+}
+
+ParticleSystem* Renderer::CreateParticleSystem()
+{
+	ParticleSystem *particleSystem = new ParticleSystem();
+
+	return particleSystem;
+}
+
 void Renderer::AddRenderItem( RenderItem *pItem )
 {
 	_renderItemList.push_back( pItem );
@@ -81,5 +95,6 @@ Camera* Renderer::GetCamera()
 {
 	return &_camera;
 }
+
 
 }

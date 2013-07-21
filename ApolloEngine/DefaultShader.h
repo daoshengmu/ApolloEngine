@@ -3,12 +3,32 @@
 
 #include <string>
 
+/**
+*
+* @file     DefaultShader.h
+* @author   Daosheng Mu
+* @version  1.0
+*
+* @section  LICENSE
+*
+* (C) All rights reserved.
+*
+* @section	Description
+*
+* Default shader for temporary experiment, this should be more general
+*
+*/
+
 namespace Apollo
 {
 
 class DefaultShader
 {
 public:
+
+	//--------------------------------------------------------------------------------------
+	/// @brief Constructor, write shader here
+	//--------------------------------------------------------------------------------------
 	DefaultShader()
 	{
 		_vertexShader = 
@@ -39,6 +59,7 @@ public:
 			"uniform vec4 g_sunlightColor; \n"
 			"uniform vec4 g_sunlightAmbient; \n"
 			"uniform vec4 g_sunlightDir; \n"		
+			"uniform vec4 g_materialColor; \n"
 			"varying vec4 outEyeVec; \n"
 			"varying vec3 outNormal; \n"		
 			"\n"
@@ -52,12 +73,24 @@ public:
  			" float spec = dot( normal, halfVector.xyz ); \n"
  			" spec = min( max( 0.0, spec ), 1.0 ); \n"
  			" spec = pow( spec, g_sunlightColor.w ); \n" 		
-			" color = g_sunlightAmbient.xyz + ( g_sunlightColor.xyz * (diff+spec)  ); \n"
+			" color = g_sunlightAmbient.xyz + ( g_sunlightColor.xyz * (diff+spec) * g_materialColor.xyz ); \n"
 			" gl_FragColor = vec4( color.x, color.y, color.z, 1.0); \n"
 			"} \n";
 	}
-
+	
+	//--------------------------------------------------------------------------------------
+	/// @brief Get vertex shader
+	/// 
+	/// @return vertex shader
+	//-------------------------------------------------------------------------------------
 	const std::string* GetVertexShader() { return &_vertexShader; }
+	
+
+	//--------------------------------------------------------------------------------------
+	/// @brief Get fragment shader
+	///  
+	/// @return fragement shader
+	//--------------------------------------------------------------------------------------
 	const std::string* GetFragmentShader() { return &_fragmentShader; }
 
 private:

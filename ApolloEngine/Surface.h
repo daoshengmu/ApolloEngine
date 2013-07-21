@@ -15,13 +15,15 @@ public:
 	uint GetNumVertices() const;
 	uint GetVertexSize();
 	uint GetNumIndices() const;
-	const Material *GetMaterial() const;
+	Material *GetMaterial() const;
 	const Matrix4x4f *GetWorldMatrix() const;
 	void SetIndexBuffer( VertexBuffer buffer );
 	IndexBuffer GetIndexBuffer() const;
 	void SetVertexBuffer( IndexBuffer buffer );
 	VertexBuffer GetVertexBuffer() const;
 	void SetWorldMatrixRef( Matrix4x4f *pMatrix );
+	void UploadVertexBuffer( const void*data, uint count, uint vertexSize );
+	void UploadIndexBuffer( const void*data, uint count );
 
 private:
 	Surface();

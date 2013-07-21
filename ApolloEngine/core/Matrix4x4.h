@@ -1,7 +1,21 @@
 
 #pragma once
 
-//#include "Vector3.h"
+/**
+*
+* @file     Matrix4x4.h
+* @author   Daosheng Mu
+* @version  1.0
+*
+* @section  LICENSE
+*
+* (C) All rights reserved.
+*
+* @section	Description
+*
+* Matrix4x4 template
+*
+*/
 
 namespace Apollo
 {
@@ -12,11 +26,19 @@ template<class Type>
 class Matrix4x4
 {
 public:
+	//--------------------------------------------------------------------------
+	/// @brief Copy Constructor
+	//--------------------------------------------------------------------------
 	Matrix4x4() 
 	{
 		 SetIdentity();
 	}
 
+	//--------------------------------------------------------------------------
+	/// @brief Copy Constructor
+	///
+	/// @param [in] rhs Matrix4x4 to copy from
+	//--------------------------------------------------------------------------
 	Matrix4x4( const Matrix4x4<Type> &rhs)
 	{
 		const Type* pRHSItems = rhs.GetItems();
@@ -24,6 +46,11 @@ public:
 		memcpy( (void*)_items, (const void*)pRHSItems, sizeof(_items) );
 	}
 
+	//--------------------------------------------------------------------------
+	/// @brief Constructor
+	///
+	/// @param [in] Type Matrix4x4 items
+	//--------------------------------------------------------------------------
 	Matrix4x4( 
 		Type m00, Type m01, Type m02, Type m03,
 		Type m10, Type m11, Type m12, Type m13,
@@ -36,6 +63,11 @@ public:
 		_items[3*4+0] = m30; _items[3*4+1] = m31; _items[3*4+2] = m32; _items[3*4+3] = m33;
 	}
 
+	//--------------------------------------------------------------------------
+	/// @brief Set items to Matrix4x4
+	///
+	/// @param [in] Type items be set to Matrix4x4
+	//--------------------------------------------------------------------------
 	void SetItems( 
 		Type m00, Type m01, Type m02, Type m03,
 		Type m10, Type m11, Type m12, Type m13,
@@ -48,15 +80,18 @@ public:
 		_items[3*4+0] = m30; _items[3*4+1] = m31; _items[3*4+2] = m32; _items[3*4+3] = m33;
 	}
 
+	//--------------------------------------------------------------------------
+	/// @brief Set identity to matrix
+	//--------------------------------------------------------------------------
 	void SetIdentity()
 	{
 		memcpy( _items, &GetIdentity(), sizeof(_items) );
 	}
 
 	//--------------------------------------------------------------------------
-	/// @brief Transpose current matrix
+	/// @brief Assign current matrix and transpose it
 	/// 
-	/// @param [in] pMtx Assign martix ptr transpose to this
+	/// @param [in] pMtx Assign matrix to this, and it will be transposed
 	//--------------------------------------------------------------------------
 	void AssignTranspose( const Matrix4x4<Type>& matrix )
 	{
@@ -86,7 +121,11 @@ public:
 		_items[3*4+2] = lpValue[2*4+3];
 	}
 
-
+	//--------------------------------------------------------------------------
+	/// @brief Scale the matrix
+	///
+	/// @param [in] vector scale vector 
+	//--------------------------------------------------------------------------
 	void Scale( const Vector3<Type>& vector )
 	{
 		_items[0*4+0] *= vector.x;
@@ -105,6 +144,11 @@ public:
 		_items[3*4+2] *= vector.z;
 	}
 
+	//--------------------------------------------------------------------------
+	/// @brief Translate the matrix
+	///
+	/// @param [in] vector translate matrix according to vector
+	//--------------------------------------------------------------------------
 	void Translate( const Vector3<Type>& vector )
 	{
 		_items[3*4+0] += vector.x;
@@ -112,16 +156,35 @@ public:
 		_items[3*4+2] += vector.z;
 	}
 
+	//--------------------------------------------------------------------------
+	/// @brief Get items of this Matrix
+	///	
+	/// @return Matrix items
+	//--------------------------------------------------------------------------
 	Type* GetItems()
 	{
 		return _items;
 	}
 
+	//--------------------------------------------------------------------------
+	/// @brief Get items of this Matrix
+	///	
+	/// @return Matrix items
+	//--------------------------------------------------------------------------
 	const Type* GetItems() const
 	{
 		return _items;
 	}
 
+	//--------------------------------------------------------------------------------------
+	/// @brief Rotate follow the axis
+	/// 
+	/// @param [in] axis Follow this axis to rotate
+	/// 
+	/// @param [in] angle Rotate angle
+	/// 
+	/// @return result( false: vector is invalid, true is ok ) 
+	//--------------------------------------------------------------------------------------
 	bool RotateAxis( const Vector3<Type>& axis, Type angle )
 	{
 		if ( axis == Vector3<Type>( 0, 0, 0) )
@@ -165,6 +228,13 @@ public:
 		return true;
 	}
 
+	//--------------------------------------------------------------------------------------
+	/// @brief Transform vector from matrix
+	/// 
+	/// @param [in] vec The vector wanna be transformed
+	/// 
+	/// @return The transformed vector
+	//--------------------------------------------------------------------------------------
 	Vector3<Type> TransformVector( const Vector3<Type>& vec ) const
 	{
 		Type x,y,z;
@@ -184,6 +254,15 @@ public:
 		return Vector3<Type>(x,y,z);
 	} // End of TransformVector for cXEMatrix4x4
 
+	//--------------------------------------------------------------------------------------
+	/// @brief Output scale, rotate, translate from matrix
+	/// 
+	/// @param [out] Scale Scale vector
+	/// 
+	/// @param [out] Rotate Rotate vector
+	/// 
+	/// @param [out] Translate Translate vector
+	//--------------------------------------------------------------------------------------
 	void MatrixToSRT( Vector3<Type>& Scale, 
 		Quaternion<Type>& Rotate,
 		Vector3<Type>& Translate  )
@@ -271,6 +350,13 @@ public:
 		Translate.z = this->_items[14];
 	}
 
+	//--------------------------------------------------------------------------------------
+	/// @brief Assign operator
+	/// 
+	/// @param [in] rhs Assign matrix4x4 from rhs
+	/// 
+	/// @return Self
+	//--------------------------------------------------------------------------------------
 	Matrix4x4<Type>& operator = ( const Matrix4x4<Type>& rhs )
 	{
 		const Type* pRHSItems = rhs.GetItems();
@@ -280,6 +366,13 @@ public:
 		return *this;
 	}
 
+	//--------------------------------------------------------------------------------------
+	/// @brief Multiply operation
+	/// 
+	/// @param [in] rhs Matrix4x4 to multiply
+	/// 
+	/// @return Self
+	//--------------------------------------------------------------------------------------
 	Matrix4x4<Type>& operator *= ( const Matrix4x4<Type>& rhs )
 	{
 		Matrix4x4<Type> temp;
@@ -316,7 +409,12 @@ public:
 		return *this;
 	}
 	
-	static Matrix4x4<Type>& GetIdentity()
+	//--------------------------------------------------------------------------------------
+	/// @brief Get identity matrix
+	/// 
+	/// @return Identity matrix
+	//--------------------------------------------------------------------------------------
+	const static Matrix4x4<Type>& GetIdentity()
 	{
 		static Matrix4x4<Type> identity( 1, 0, 0, 0,
 										0, 1, 0, 0,
