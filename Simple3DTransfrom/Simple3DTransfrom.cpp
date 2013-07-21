@@ -22,30 +22,21 @@ ATOM				MyRegisterClass(HINSTANCE hInstance);
 BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
-void Update();
+void Update( const Vector3f& distanceBA );
 
 Cube *cubeA = NULL;
 Cube *cubeB = NULL;
 
-struct TransformCubeB
-{
-	//Matrix4x4f _matrixA;
-	Vector3f _axis;
-	float    _angle;
-	Vector3f _vectorBA;
-};
-
-TransformCubeB transformCubeB;
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
-                     HINSTANCE hPrevInstance,
-                     LPTSTR    lpCmdLine,
-                     int       nCmdShow)
+						HINSTANCE hPrevInstance,
+						LPTSTR    lpCmdLine,
+						int       nCmdShow)
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
- 	// TODO: Place code here.
+	// TODO: Place code here.
 	MSG msg;
 	HACCEL hAccelTable;
 
@@ -66,7 +57,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_SIMPLE3DTRANSFROM));
 
 	LightManager::Instance().SetAmbientColor( Vector4f( 0.2f, 0.2f, 0.2f, 1 ) );
-	Vector3f dir( 0, -1, 15 );	
+	Vector3f dir( 0, -1, -15 );	
 	dir.Normalize();
 	LightManager::Instance().SetDirection( dir );
 	LightManager::Instance().SetDirectionalColor( Vector4f( 1, 1, 0, 1 ) );
@@ -75,9 +66,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	Camera *camera = renderer.GetCamera();
 	camera->SetViewPort( (float)windowWidth, (float)windowHeight );
 	node = camera->GetTransformNode();
- 	node->SetOrigin( Vector3f( 0, -20, 5 ) );
-   	node->SetPitchDeltaAngle( -45.0f );	
-		
+	node->SetOrigin( Vector3f( 0, -25, 3 ) );
+	node->SetPitchDeltaAngle( -45.0f );	
+
 	cubeA = renderer.CreateCube();
 	renderer.AddRenderItem( cubeA );
 
@@ -88,12 +79,11 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	node->SetScale( Vector3f( 2, 2, 2 ) ); 
 	node->SetOrigin( Vector3f( 0,0,0 ) );
-//	transformCubeB._matrixA = *node->GetWorldMatrix();
 
- 	node = cubeB->GetTransformNode();
- 
- 	node->SetScale( Vector3f(1,1,1) );
- 	node->SetOrigin( Vector3f( 0, 5, 5 ) );
+	node = cubeB->GetTransformNode();
+
+	node->SetScale( Vector3f(1,1,1) );
+	node->SetOrigin( Vector3f( 0, 5, 5 ) );
 
 	TransformNode *nodeA = cubeA->GetTransformNode();
 	TransformNode *nodeB = cubeB->GetTransformNode();
@@ -101,17 +91,8 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	const Vector3f *nodeBPos = nodeB->GetOrigin();
 	const Vector3f *nodeAPos = nodeA->GetOrigin();
 
-	Vector3f distance = *nodeB->GetOrigin() - *nodeA->GetOrigin();
-	float length = distance.Length();	
+	Vector3f distance = *nodeB->GetOrigin() - *nodeA->GetOrigin();	
 
-	transformCubeB._vectorBA = distance;
-
-	Vector3f axis;
-
-	nodeA->GetRightVector( axis );
-	transformCubeB._axis = axis;
-	transformCubeB._angle = 0;	
-	
 	memset(&msg,0,sizeof(msg));
 
 	// Main message loop:
@@ -124,7 +105,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		}
 		else
 		{
-			Update();
+			Update( distance );
 		}
 	}
 
@@ -133,23 +114,25 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	return (int) msg.wParam;
 }
 
-void Update()
+void Update( const Vector3f& distanceBA )
 {
 	Renderer &renderer = Renderer::Instance();	
-	
-	TransformNode *nodeA = cubeA->GetTransformNode();
-	TransformNode *nodeB = cubeB->GetTransformNode();
-	
- 	Quaternionf transformQuaterrnion;
- 
- 	transformCubeB._angle += 1.0f;
- 	transformQuaterrnion.fromAngleAxis( transformCubeB._angle, transformCubeB._axis );
- 	Vector3f finalPosition = transformQuaterrnion.TransformVector3D( transformCubeB._vectorBA );
 
-	nodeB->SetOrigin( finalPosition );
+	TransformNode *nodeA = cubeA->GetTransformNode();
+	TransformNode *nodeB = cubeB->GetTransformNode();	
+
+	Matrix4x4f transformMtx;
+
+	transformMtx.Translate( distanceBA );
+
+	const Matrix4x4f *pRotate = nodeA->GetRotateMatrix();
+
+	transformMtx *= (*pRotate);
+
+	nodeB->SetWorldMatrix( transformMtx );
 
 	nodeA->SetYawDeltaAngle( 5.0f );
-	
+
 	renderer.Update();
 }
 
@@ -199,26 +182,26 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 //
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   HWND hWnd;
-  
-   hInst = hInstance; // Store instance handle in our global variable
+	HWND hWnd;
 
-   hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, windowWidth, windowHeight, NULL, NULL, hInstance, NULL);
+	hInst = hInstance; // Store instance handle in our global variable
 
-   if (!hWnd)
-   {
-      return FALSE;
-   }
+	hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT, 0, windowWidth, windowHeight, NULL, NULL, hInstance, NULL);
 
-   Renderer &renderer = Renderer::Instance();
+	if (!hWnd)
+	{
+		return FALSE;
+	}
 
-   renderer.Initialize( hWnd, windowWidth, windowHeight );
+	Renderer &renderer = Renderer::Instance();
 
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
+	renderer.Initialize( hWnd, windowWidth, windowHeight );
 
-   return TRUE;
+	ShowWindow(hWnd, nCmdShow);
+	UpdateWindow(hWnd);
+
+	return TRUE;
 }
 
 //
