@@ -82,8 +82,28 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
 	ParticleSystem* particleSystemA = renderer.CreateParticleSystem();
 	pMaterial = particleSystemA->GetSurface()->GetMaterial();
+	particleSystemA->SetMaxNumParticles( 100 );
+	particleSystemA->SetParticleSpeed( 1.0f );
+	Vector2f particleDir( 1, 1 );
+	particleDir.Normalize();
+	particleSystemA->SetParticleDirection( particleDir );
 	pMaterial->SetMaterialColor( Vector4f( 0, 0, 1, 1 ) );
+	node = particleSystemA->GetTransformNode();
+	node->SetOrigin( Vector3f(30,0,0) );
 	renderer.AddRenderItem( particleSystemA );
+
+	ParticleSystem* particleSystemB = renderer.CreateParticleSystem();
+	pMaterial = particleSystemB->GetSurface()->GetMaterial();
+	particleSystemB->SetMaxNumParticles( 100 );
+	particleSystemB->SetParticleSpeed( 1.0f );
+	particleDir.x = -1.0f;
+	particleDir.y = 1.0f;
+	particleDir.Normalize();
+	particleSystemB->SetParticleDirection( particleDir );
+	pMaterial->SetMaterialColor( Vector4f( 0, 0, 1, 1 ) );
+	node = particleSystemB->GetTransformNode();
+	node->SetOrigin( Vector3f(-30,0,0) );
+	renderer.AddRenderItem( particleSystemB );
 
 	memset(&msg,0,sizeof(msg));
 

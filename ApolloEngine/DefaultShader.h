@@ -43,6 +43,7 @@ public:
 			"uniform vec4 g_eyePosition; \n"
 			"uniform vec4 g_sunlightDir; \n"
 
+			"varying vec4 outColor; \n"
 			"varying vec4 outEyeVec; \n"
 			"varying vec3 outNormal; \n"
 		//	"varying vec2 outTexcoord; \n"
@@ -52,6 +53,7 @@ public:
 			" gl_Position = g_worldViewProjMatrix * vec4( g_vPositionOS, 1.0 ); \n"		
 			" vec4 wPos = g_worldMatrix * vec4( g_vPositionOS, 1.0 ); \n"
 			" outEyeVec = normalize( g_eyePosition - wPos ); \n"
+			" outColor = g_vColorOS;"
 			" outNormal = vec3( g_worldMatrix * vec4( g_vNormalOS, 0.0 ) ); \n"			
 			"} \n";
 
@@ -61,6 +63,7 @@ public:
 			"uniform vec4 g_sunlightDir; \n"		
 			"uniform vec4 g_materialColor; \n"
 			"varying vec4 outEyeVec; \n"
+			"varying vec4 outColor; \n"
 			"varying vec3 outNormal; \n"		
 			"\n"
 			"void main(void) \n"
@@ -74,7 +77,8 @@ public:
  			" spec = min( max( 0.0, spec ), 1.0 ); \n"
  			" spec = pow( spec, g_sunlightColor.w ); \n" 		
 			" color = g_sunlightAmbient.xyz + ( g_sunlightColor.xyz * (diff+spec) * g_materialColor.xyz ); \n"
-			" gl_FragColor = vec4( color.x, color.y, color.z, 1.0); \n"
+			" float alpha = outColor.w * g_materialColor.w; \n"
+			" gl_FragColor = vec4( color.x, color.y, color.z, alpha); \n"
 			"} \n";
 	}
 	

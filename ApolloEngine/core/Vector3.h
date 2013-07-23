@@ -12,7 +12,7 @@
 *
 * @section	Description
 *
-* Matrix4x4 template
+* Vector3 template
 *
 */
 

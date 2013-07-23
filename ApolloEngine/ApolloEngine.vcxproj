@@ -96,6 +96,7 @@
     <ClInclude Include="core\Matrix4x4.h" />
     <ClInclude Include="core\Quaternion.h" />
     <ClInclude Include="core\Utility.h" />
+    <ClInclude Include="core\Vector2.h" />
     <ClInclude Include="core\Vector3.h" />
     <ClInclude Include="core\Vector4.h" />
     <ClInclude Include="Cube.h" />

@@ -14,7 +14,7 @@ class RenderItem
 
 public:
 	RenderItem() :_surface(NULL) {}
-	//void Initialize( std::vector<float> vertices, std::vector<float> indices );
+	
 	Surface* GetSurface();
 	virtual void Update() = 0;
 
@@ -25,9 +25,7 @@ protected:
 	Surface		 *_surface;	
 
 private:
-// 	VertexBuffer  _vertexBuffer;
-// 	IndexBuffer   _indexBuffer;
-	
+
 	
 };
 

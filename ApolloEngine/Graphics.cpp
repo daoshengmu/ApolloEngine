@@ -135,7 +135,9 @@ bool Graphics::Initialize( HWND hWnd, UINT width, UINT height, bool bFullScreen 
   	glEnable( GL_CULL_FACE );
   	glFrontFace( GL_CCW );
   	glCullFace( GL_BACK );
- 	//glDisable(GL_CULL_FACE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);		
+	glEnable(GL_BLEND);
+	//glDisable( GL_CULL_FACE );
 	
 	return true; 
 
