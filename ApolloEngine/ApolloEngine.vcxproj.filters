@@ -105,6 +105,9 @@
     <ClInclude Include="core\Vector2.h">
       <Filter>Header Files\core</Filter>
     </ClInclude>
+    <ClInclude Include="Nurbs.h">
+      <Filter>Header Files\core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -138,6 +141,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ParticleSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Nurbs.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,3 +1,4 @@
 *.ipch
 *.tlog
 ApolloEngine.opensdf
+*.idb

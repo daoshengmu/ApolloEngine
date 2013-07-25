@@ -5,6 +5,7 @@
 #include "ParticleSystemTest.h"
 #include "Renderer.h"
 #include "LightManager.h"
+#include "Nurbs.h"
 
 #define MAX_LOADSTRING 100
 
@@ -21,6 +22,7 @@ BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 void Update();
+void __cdecl WinOutput( char *szString, ... );
 
 using namespace Apollo;
 
@@ -105,6 +107,71 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	node->SetOrigin( Vector3f(-30,0,0) );
 	renderer.AddRenderItem( particleSystemB );
 
+	// Try the Nurbs formula
+	Nurbs *nurbCurve = new Nurbs();
+	std::vector<int> knot;
+
+	float b[31];  /* allows for up to 10  control vertices */
+	memset( b, 0, sizeof( b ) );
+	b[1]=0;
+	b[2]=0;
+	b[3]=1;
+	b[4]=1;
+	b[5]=2;
+	b[6]=1;
+	b[7]=2.5;
+	b[8]=0;
+	b[9]=1;
+	b[10]=4;
+	b[11]=2;
+	b[12]=1;
+	b[13]=5;
+	b[14]=0;
+	b[15]=1;
+// 	nurbCurve->SetControlPoints(  );
+// 	nurbCurve->SetKnots()
+	int npts,k,p1;
+	npts = 5;
+	k = 3;     /* third order, change for other orders */
+	p1 = 11;   /* eleven points on curve */
+	float p[103];
+	memset( p, 0, sizeof( p ) );
+	int i;
+	float h[11];
+	
+	h[0] = 0.0;
+	for (i=1; i <= npts; i++){
+		h[i] = 1.0;
+	}
+
+	/*  vary the homogeneous weighting factor 0, 0.25, 1.0, 5.0 */
+
+	h[3] = 1;
+
+	nurbCurve->RationalBSplineCurve( npts, k, p1, b, h, p );
+
+	WinOutput("\nPolygon points\n");
+
+	for (i = 1; i <= 3*npts; i=i+3){
+		WinOutput(" %f %f %f \n",b[i],b[i+1],b[i+2]);
+	}
+
+	WinOutput("\nHomogeneous weighting vector is \n");
+	for (i = 1; i <= npts; i++){
+		WinOutput(" %f ", h[i]);
+	}
+	WinOutput("\n");
+
+
+	WinOutput("\nCurve points\n");
+
+	for (i = 1; i <= 3*p1; i=i+3){
+		WinOutput(" %f %f %f \n",p[i],p[i+1],p[i+2]);
+	}
+
+	// End of Nurbs 
+
+
 	memset(&msg,0,sizeof(msg));
 
 	// Main message loop:
@@ -133,7 +200,19 @@ void Update()
 	renderer.Update();
 }
 
+//------------------------------------------------------------------------
+void __cdecl WinOutput( char *szString, ... )
+{
+	char szStr[1024];
 
+	va_list params;
+	va_start ( params, szString );
+	
+	vsprintf ( szStr, szString, params );
+	
+	OutputDebugStringA ( szStr );
+	OutputDebugStringA ( "\n" );
+}; // End of WinOutput
 
 //
 //  FUNCTION: MyRegisterClass()
