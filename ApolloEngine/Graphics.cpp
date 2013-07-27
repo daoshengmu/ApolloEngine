@@ -5,6 +5,7 @@
 #include "glError.h"
 #include <assert.h>
 #include "LightManager.h"
+#include "ConstantTable.h"
 
 namespace Apollo
 {
@@ -38,6 +39,8 @@ VertexDecl gVertexDeclResource[] =
 {
 	ADD_VERTEX_DECL( ElementDecl_POS_COLOR_NORMAL )
 };
+
+std::map< const char*, int> ConstantTable::_value;
 
 bool Graphics::Initialize( HWND hWnd, UINT width, UINT height, bool bFullScreen )
 {
@@ -274,14 +277,22 @@ Program Graphics::CreateProgram( const std::string& vertexShaderStr, const std::
 
 	GLuint pos = glGetAttribLocation( program, "g_vNormalOS" );
 	
-	int i = glGetUniformLocation( program, "g_worldViewProjMatrix" );
-	 i = glGetUniformLocation( program, "g_worldMatrix" );
-	 i = glGetUniformLocation( program, "g_worldViewMatrix" );
-	 i = glGetUniformLocation( program, "g_eyePosition" );
-	 i = glGetUniformLocation( program, "g_sunlightDir" );
-	 i = glGetUniformLocation( program, "g_sunlightColor" );
-	 i = glGetUniformLocation( program, "g_sunlightAmbient" );	
-	 i = glGetUniformLocation( program, "g_materialColor" );
+	int i = glGetUniformLocation( program, g_worldViewProjMatrix );
+	 ConstantTable::InsertToConstantMap( g_worldViewProjMatrix, i );
+	 i = glGetUniformLocation( program, g_worldMatrix );
+	 ConstantTable::InsertToConstantMap( g_worldMatrix, i );
+	 i = glGetUniformLocation( program, g_worldViewMatrix );
+	 ConstantTable::InsertToConstantMap( g_worldViewMatrix, i );
+	 i = glGetUniformLocation( program, g_eyePosition );
+	 ConstantTable::InsertToConstantMap( g_eyePosition, i );
+	 i = glGetUniformLocation( program, g_sunlightDir );
+	 ConstantTable::InsertToConstantMap( g_sunlightDir, i );
+	 i = glGetUniformLocation( program, g_sunlightColor );
+	 ConstantTable::InsertToConstantMap( g_sunlightColor, i );
+	 i = glGetUniformLocation( program, g_sunlightAmbient );	
+	 ConstantTable::InsertToConstantMap( g_sunlightAmbient, i );
+	 i = glGetUniformLocation( program, g_materialColor );
+	 ConstantTable::InsertToConstantMap( g_materialColor, i );
 
 	// Check for link success
 	GLint maxLength = 0;
@@ -364,16 +375,16 @@ void Graphics::Draw( const Surface *surf )
 
 	this->SetProgram( pMaterial->GetProgram() );
 		
-	this->SetProgramConstantsFromVector( 0, Vector4f( _eyePosition.x, _eyePosition.y, _eyePosition.z, 1.0f ) );
-	this->SetProgramConstantsFromVector( 1, Vector4f( pMaterialColor->x, pMaterialColor->y, pMaterialColor->z, pMaterialColor->w ) );
+	this->SetProgramConstantsFromVector( ConstantTable::FindConstantIndex( g_eyePosition), Vector4f( _eyePosition.x, _eyePosition.y, _eyePosition.z, 1.0f ) );
+	this->SetProgramConstantsFromVector( ConstantTable::FindConstantIndex( g_materialColor ), Vector4f( pMaterialColor->x, pMaterialColor->y, pMaterialColor->z, pMaterialColor->w ) );
 	// Set light parameters to shader
 	const Vector4f *color = LightManager::Instance().GetAmbientColor();
-	this->SetProgramConstantsFromVector( 2, *color );
+	this->SetProgramConstantsFromVector( ConstantTable::FindConstantIndex( g_sunlightAmbient ), *color );
 	color = LightManager::Instance().GetDirectionalColor();
-	this->SetProgramConstantsFromVector( 3, *color );
+	this->SetProgramConstantsFromVector( ConstantTable::FindConstantIndex( g_sunlightColor ), *color );
 	const Vector3f *dir = LightManager::Instance().GetDirection();
 	Vector4f lightDir( -dir->x, -dir->y , -dir->z, 1 );
-	this->SetProgramConstantsFromVector( 4, lightDir );
+	this->SetProgramConstantsFromVector( ConstantTable::FindConstantIndex( g_sunlightDir ), lightDir );
 	// End of setting light
 
 	if ( pWorldMtx ) 
@@ -381,7 +392,7 @@ void Graphics::Draw( const Surface *surf )
 		_worldViewProjMatrix = *pWorldMtx;
 		_worldViewProjMatrix *= _viewProjMatrix;
 	
-		this->SetProgramConstantsFromMatrix( 6, _worldViewProjMatrix ); // mvp mtx 5
+		this->SetProgramConstantsFromMatrix( ConstantTable::FindConstantIndex( g_worldViewProjMatrix ), _worldViewProjMatrix ); // mvp mtx 5
 
 		_worldViewMatrix = *pWorldMtx; 
 		_worldViewMatrix *= _viewMatrix; // world-view mtx 		
@@ -389,16 +400,16 @@ void Graphics::Draw( const Surface *surf )
 	}
 	else
 	{
-		this->SetProgramConstantsFromMatrix( 6, _viewProjMatrix ); // mvp mtx 5
+		this->SetProgramConstantsFromMatrix( ConstantTable::FindConstantIndex( g_worldViewProjMatrix ), _viewProjMatrix ); // mvp mtx 5
 	}
 
 	if ( pWorldMtx )
 	{ 				
-		this->SetProgramConstantsFromMatrix( 5, *pWorldMtx );		
+		this->SetProgramConstantsFromMatrix( ConstantTable::FindConstantIndex( g_worldMatrix ), *pWorldMtx );		
 	} 
 	else
 	{				
-		this->SetProgramConstantsFromMatrix( 5, Matrix4x4f::GetIdentity() );		
+		this->SetProgramConstantsFromMatrix( ConstantTable::FindConstantIndex( g_worldMatrix ), Matrix4x4f::GetIdentity() );		
 	}
 
 	this->SetVertexBufferAt( 0, surf->GetVertexBuffer() );
