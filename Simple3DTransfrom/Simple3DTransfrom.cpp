@@ -73,16 +73,18 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	renderer.AddRenderItem( cubeA );
 
 	cubeB = renderer.CreateCube();
+	Material *pMaterial = cubeB->GetSurface()->GetMaterial();
+	pMaterial->SetMaterialColor( Vector4f( 1, 0, 0, 1) );
 	renderer.AddRenderItem( cubeB );
 
 	node = cubeA->GetTransformNode();
 
-	node->SetScale( Vector3f( 2, 2, 2 ) ); 
+	node->SetScale( Vector3f( 8, 8, 8 ) ); 
 	node->SetOrigin( Vector3f( 0,0,0 ) );
 
 	node = cubeB->GetTransformNode();
 
-	node->SetScale( Vector3f(1,1,1) );
+	node->SetScale( Vector3f(3,3,3) );
 	node->SetOrigin( Vector3f( 0, 5, 5 ) );
 
 	TransformNode *nodeA = cubeA->GetTransformNode();
@@ -98,8 +100,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	Vector3f distance = *nodeB->GetOrigin() - *nodeA->GetOrigin();	
 
 	transformNode.GetRightVector( distance );
-
-	distance *= 5.0f;
+	distance *= 12.0f;
 
 	memset(&msg,0,sizeof(msg));
 
@@ -122,25 +123,29 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	return (int) msg.wParam;
 }
 
+//--------------------------------------------------------------------------------------
+/// @brief Update, set cubeB to CubeA distance, and the parent node
+/// 
+/// @param [in] distanceBA cubeB to CubeA distance
+///
+/// @param [in] transformNode The rotating parent node
+//--------------------------------------------------------------------------------------
 void Update( const Vector3f& distanceBA, TransformNode* transformNode )
 {
 	Renderer &renderer = Renderer::Instance();	
 
 	TransformNode *nodeA = cubeA->GetTransformNode();
 	TransformNode *nodeB = cubeB->GetTransformNode();	
-
-	static float angle = 0.0f;
-	angle += 1.0f;
-
+	
 	Matrix4x4f transformMtx;
-	transformMtx.Translate( distanceBA );
-	transformNode->SetYawDeltaAngle( 3.0f );
+	transformMtx.Translate( distanceBA ); // translate first
+	transformNode->SetYawDeltaAngle( 2.0f ); // next, rotate
 
 	const Matrix4x4f *rotateMatrix = transformNode->GetRotateMatrix();	
 	transformMtx *= *rotateMatrix;	
 
 	nodeB->SetWorldMatrix( transformMtx );
-	nodeA->SetYawDeltaAngle( 5.0f );
+	nodeA->SetYawDeltaAngle( 3.0f );
 
 	renderer.Update();
 }

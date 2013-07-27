@@ -9,7 +9,17 @@ class Square : public RenderItem
 {
 public:
 	Square();
+
+	//--------------------------------------------------------------------------------------
+	/// @brief Get square's transform node, including SRT transformation
+	/// 
+	/// @return TransformNode
+	//--------------------------------------------------------------------------------------
 	TransformNode* GetTransformNode();
+	
+	//--------------------------------------------------------------------------------------
+	/// @brief Update square
+	//--------------------------------------------------------------------------------------
 	virtual void Update();
 
 private:

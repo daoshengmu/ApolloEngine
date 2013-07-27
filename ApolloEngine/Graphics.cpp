@@ -154,14 +154,13 @@ void Graphics::ClearColor( const Vector4f &color )
 // 	GLUnurbs *theNurb=gluNewNurbsRenderer();
 // 	gluNurbsProperty(theNurb,GLU_SAMPLING_TOLERANCE,10.0);
 // 	gluNurbsProperty(theNurb,GLU_DISPLAY_MODE,GLU_FILL);
-// 	GLfloat ctrlpoints[9][3] = {{1,0,0},{0.5,0.5,0},{0,4,0},{-0.5,0.5,0},
-// 	{-1,0,0},{-0.5,-0.5,0},{0,-4,0},{0.5,-0.5,0},
-// 	{1,0,0}};
+// 	GLfloat ctrlpoints[9][3] = {{ 0.000000, 1.000000, 0.000000  },{ 1.000000, 1.000000, 2.000000 },{2.500000, 1.000000 , 0.000000},{4.000000, 1.000000, 2.000000 },
+// 	{5.000000, 1.000000, 0.000000 }};
+// 
 // 	GLfloat knots[12] = {1,2,3,4,5,6,7,8,9,10,11,12};
 // 	gluBeginCurve(theNurb);
 // 	gluNurbsCurve(theNurb,12,knots,3,&ctrlpoints[0][0],3,GL_MAP1_VERTEX_3);
-// 	gluEndCurve(theNurb);
-
+// 	gluEndCurve(theNurb);	 
 }
 
 void Graphics::Terminate()
@@ -170,7 +169,7 @@ void Graphics::Terminate()
 }
 
 void Graphics::EndFrame()
-{
+{	
 	SwapBuffers( _glDev );
 	CheckForErrors();
 }
@@ -274,6 +273,7 @@ Program Graphics::CreateProgram( const std::string& vertexShaderStr, const std::
 	glLinkProgram( program );
 
 	GLuint pos = glGetAttribLocation( program, "g_vNormalOS" );
+	
 	int i = glGetUniformLocation( program, "g_worldViewProjMatrix" );
 	 i = glGetUniformLocation( program, "g_worldMatrix" );
 	 i = glGetUniformLocation( program, "g_worldViewMatrix" );
@@ -344,7 +344,7 @@ void Graphics::SetVertexBufferAt( int index, VertexBuffer buffer )
 	bool check = CheckForErrors();
 }
 
-void Graphics::DrawTriangles( IndexBuffer indexBuffer, uint numIndices )
+void Graphics::_DrawTriangles( IndexBuffer indexBuffer, uint numIndices )
 { 
 	// Set index buffer 
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, indexBuffer );
@@ -403,7 +403,7 @@ void Graphics::Draw( const Surface *surf )
 
 	this->SetVertexBufferAt( 0, surf->GetVertexBuffer() );
 	this->SetVertexDeclaration( pMaterial->GetVertexDeclaration() );
-	this->DrawTriangles( surf->GetIndexBuffer(), surf->GetNumIndices() );
+	this->_DrawTriangles( surf->GetIndexBuffer(), surf->GetNumIndices() );
 }
 
 void Graphics::SetCamera( Camera *pCamera )
@@ -422,6 +422,48 @@ void Graphics::SetViewPort( uint x, uint y, uint width, uint height )
 {
 	glViewport( (GLint)x, (GLint)y, (GLsizei)width, (GLsizei)height );
 	CheckForErrors();
+}
+
+void Graphics::_DrawCurve()
+{
+	int i ;
+	GLfloat ctrlpoints[4][3] = {
+		{ -4, 0, -4.0}, { -2, 0, 4.0}, 
+		{2, 0, -4.0}, {4, 0, 4.0}};
+		GLUnurbs *theNurb=gluNewNurbsRenderer();
+		GLfloat knots[8] = {0,0,0,0,1,1,1,1};
+		glColor3f(1.0, 1.0, 1.0);
+		gluBeginCurve(theNurb);
+		gluNurbsCurve(theNurb,8,knots,3,&ctrlpoints[0][0],4,GL_MAP1_VERTEX_3);
+		gluEndCurve(theNurb);
+		// 		glMatrixMode(GL_PROJECTION);
+		// 		glLoadIdentity();
+		// 		int w = 1024;
+		// 		int h = 768;
+		// 		if (w <= h)
+		// 			glOrtho(-5.0, 5.0, -5.0*(GLfloat)h/(GLfloat)w, 
+		// 			5.0*(GLfloat)h/(GLfloat)w, -5.0, 5.0);
+		// 		else
+		// 			glOrtho(-5.0*(GLfloat)w/(GLfloat)h, 
+		// 			5.0*(GLfloat)w/(GLfloat)h, -5.0, 5.0, -5.0, 5.0);
+		// 		glMatrixMode(GL_MODELVIEW);
+		// 		glLoadIdentity();
+		// 		int i ;
+		// 		glMap1f(GL_MAP1_VERTEX_3, 0.0, 1.0, 3, 4, &ctrlpoints[0][0]);
+		// 		glEnable(GL_MAP1_VERTEX_3);
+		// 		glColor3f(1.0, 1.0, 1.0);
+		// 		glBegin(GL_LINE_STRIP);
+		// 		for (i = 0; i <= 30; i++) 
+		// 			glEvalCoord1f((GLfloat) i/30.0);
+		// 		glEnd();
+		/* The following code displays the control points as dots. */
+		glPointSize(5.0);
+		glColor3f(1.0, 1.0, 0.0);
+		glBegin(GL_POINTS);
+		for (i = 0; i < 4; i++) 
+			glVertex3fv(&ctrlpoints[i][0]);
+		glEnd();
+
 }
 
 }

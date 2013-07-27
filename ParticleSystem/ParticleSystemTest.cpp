@@ -57,7 +57,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	LightManager::Instance().SetDirectionalColor( Vector4f( 1, 1, 1, 1 ) );
 
 	Renderer &renderer = Renderer::Instance();	
-
 	renderer.SetClearColor( Vector4f( 0,0,0,1) );
 
 	Camera *pCamera = renderer.GetCamera();
@@ -66,6 +65,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	pCamera->SetCameraType(Camera::CT_ORTHOGONAL);	
 	node->SetOrigin( Vector3f( 0, -5, 0 ) );
 
+	// Create squareA
 	Square* squareA = renderer.CreateSquare();
 	Material *pMaterial = squareA->GetSurface()->GetMaterial();
 	pMaterial->SetMaterialColor( Vector4f( 1, 0, 0, 1) );
@@ -74,6 +74,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	node->SetScale( Vector3f( 50, 50, 50 ) );
 	renderer.AddRenderItem( squareA );
 
+	// Create squareB
 	Square* squareB = renderer.CreateSquare();
 	pMaterial = squareB->GetSurface()->GetMaterial();
 	pMaterial->SetMaterialColor( Vector4f( 1, 0, 0, 1) );
@@ -82,6 +83,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	node->SetScale( Vector3f( 50, 50, 50 ) );
 	renderer.AddRenderItem( squareB );
 
+	// Create particleA
 	ParticleSystem* particleSystemA = renderer.CreateParticleSystem();
 	pMaterial = particleSystemA->GetSurface()->GetMaterial();
 	particleSystemA->SetMaxNumParticles( 100 );
@@ -91,9 +93,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	particleSystemA->SetParticleDirection( particleDir );
 	pMaterial->SetMaterialColor( Vector4f( 0, 0, 1, 1 ) );
 	node = particleSystemA->GetTransformNode();
-	node->SetOrigin( Vector3f(30,0,0) );
+	node->SetOrigin( Vector3f(30,0,0) );		
 	renderer.AddRenderItem( particleSystemA );
 
+	// Create squareB
 	ParticleSystem* particleSystemB = renderer.CreateParticleSystem();
 	pMaterial = particleSystemB->GetSurface()->GetMaterial();
 	particleSystemB->SetMaxNumParticles( 100 );
@@ -107,33 +110,33 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	node->SetOrigin( Vector3f(-30,0,0) );
 	renderer.AddRenderItem( particleSystemB );
 
+	/*
 	// Try the Nurbs formula
 	Nurbs *nurbCurve = new Nurbs();
 	std::vector<int> knot;
 
-	float b[31];  /* allows for up to 10  control vertices */
+	float b[31];  // allows for up to 10  control vertices
 	memset( b, 0, sizeof( b ) );
 	b[1]=0;
 	b[2]=0;
-	b[3]=1;
-	b[4]=1;
-	b[5]=2;
-	b[6]=1;
-	b[7]=2.5;
+	b[3]=0.1;
+	b[4]=0.1;
+	b[5]=0.2;
+	b[6]=0.1;
+	b[7]=0.25;
 	b[8]=0;
-	b[9]=1;
-	b[10]=4;
-	b[11]=2;
-	b[12]=1;
-	b[13]=5;
+	b[9]=0.1;
+	b[10]=0.4;
+	b[11]=0.2;
+	b[12]=0.1;
+	b[13]=0.5;
 	b[14]=0;
-	b[15]=1;
-// 	nurbCurve->SetControlPoints(  );
-// 	nurbCurve->SetKnots()
+	b[15]=0.1;
+	
 	int npts,k,p1;
 	npts = 5;
-	k = 3;     /* third order, change for other orders */
-	p1 = 11;   /* eleven points on curve */
+	k = 3;     //third order, change for other orders 
+	p1 = 11;   // eleven points on curve
 	float p[103];
 	memset( p, 0, sizeof( p ) );
 	int i;
@@ -144,7 +147,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 		h[i] = 1.0;
 	}
 
-	/*  vary the homogeneous weighting factor 0, 0.25, 1.0, 5.0 */
+	//  vary the homogeneous weighting factor 0, 0.25, 1.0, 5.0 
 
 	h[3] = 1;
 
@@ -170,6 +173,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 	}
 
 	// End of Nurbs 
+	*/
 
 
 	memset(&msg,0,sizeof(msg));
@@ -206,12 +210,12 @@ void __cdecl WinOutput( char *szString, ... )
 	char szStr[1024];
 
 	va_list params;
-	va_start ( params, szString );
+	va_start( params, szString );
 	
-	vsprintf ( szStr, szString, params );
+	vsprintf_s( szStr, szString, params );
 	
-	OutputDebugStringA ( szStr );
-	OutputDebugStringA ( "\n" );
+	OutputDebugStringA( szStr );
+	OutputDebugStringA( "\n" );
 }; // End of WinOutput
 
 //

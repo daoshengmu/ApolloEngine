@@ -29,7 +29,7 @@ void Nurbs::RationalBasis( int order, float params, int numCtrlPoints, std::vect
 							, const float* weights, std::vector<float>& rationBasis )
 {
 	int nplusc;
-	int i,j,k;
+	int i,k;
 	float d,e;
 	float sum;
 	float temp[36];
@@ -103,7 +103,7 @@ void Nurbs::RationalBSplineCurve( uint numPoints, uint kOrder, uint numCurvPoint
 	 	uint numKnots = numPoints + kOrder;
 	 	std::vector<float> nbasis(30);
 	 	std::vector<int> knots(20);
-	 	int i,j, jcount;
+	 	uint i,j, jcount;
 		float temp;
 
 	 	for(i = 0; i <= numPoints; i++){
@@ -111,20 +111,20 @@ void Nurbs::RationalBSplineCurve( uint numPoints, uint kOrder, uint numCurvPoint
 	 	}
 	 
 	 	for(i = 0; i <= numKnots; i++){
-	 		knots.push_back( 0. );
+	 		knots.push_back( 0 );
 	 	}
 
 		/* generate the uniform periodic knot vector */
 		GenerateUniformKnots( numKnots, kOrder, knots );
 
-		int icount = 0;
+		uint icount = 0;
 	//	std::vector<int> knotPoints;
 		/*    calculate the points on the rational B-spline curve */
 		//int nplusc;
-		float t = kOrder-1;
+		float t = (float)(kOrder-1);
 		float step = ((float)((numPoints)-(kOrder-1)))/((float)(numCurvPoints-1));	
 		 
-		for (int i1 = 1; i1<= numCurvPoints; i1++){
+		for (uint i1 = 1; i1<= numCurvPoints; i1++){
 		 
 		 	if ((float)knots[numKnots] - t < 5e-6){
 		 		t = (float)knots[numKnots];

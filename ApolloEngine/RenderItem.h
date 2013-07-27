@@ -15,7 +15,16 @@ class RenderItem
 public:
 	RenderItem() :_surface(NULL) {}
 	
+	//--------------------------------------------------------------------------------------
+	/// @brief Get render item's surface, including vertex/index buffer
+    ///
+	/// @return Surface
+	//--------------------------------------------------------------------------------------
 	Surface* GetSurface();
+
+	//--------------------------------------------------------------------------------------
+	/// @brief Update render item's animation, transformation
+	//--------------------------------------------------------------------------------------
 	virtual void Update() = 0;
 
 protected:

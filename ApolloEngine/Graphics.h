@@ -158,7 +158,8 @@ public:
 	
 private:
 
-	void DrawTriangles( IndexBuffer indexBuffer, uint numIndices );
+	void _DrawCurve();
+	void _DrawTriangles( IndexBuffer indexBuffer, uint numIndices );
 	
 	HWND _wndHandle;
 	HDC _glDev;
@@ -168,8 +169,7 @@ private:
 	Matrix4x4f _viewProjMatrix;
 	Matrix4x4f _worldViewMatrix;
 	Matrix4x4f _viewMatrix;
-	Vector3f   _eyePosition;
-
+	Vector3f   _eyePosition;	
 };
 
 }
