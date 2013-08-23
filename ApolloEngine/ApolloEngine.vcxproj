@@ -102,7 +102,6 @@
     <ClInclude Include="core\Vector4.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="DefaultShader.h" />
-    <ClInclude Include="file.h" />
     <ClInclude Include="glError.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsType.h" />

@@ -108,9 +108,6 @@
     <ClInclude Include="Nurbs.h">
       <Filter>Header Files\core</Filter>
     </ClInclude>
-    <ClInclude Include="file.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ConstantTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
