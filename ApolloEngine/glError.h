@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 #include <assert.h>
-#include "glew.h"
+#include "GL/glew.h"
 
 /**
 *
@@ -22,7 +22,7 @@
 
 namespace Apollo
 {
-	bool CheckForErrors()
+	static bool CheckForErrors()
 	{
 #ifdef _DEBUG
 		static bool checkForErrors = true;
@@ -94,7 +94,7 @@ namespace Apollo
 
 	//
 	//
-	void ClearErrors()
+	static void ClearErrors()
 	{
 		while( glGetError() != GL_NO_ERROR );
 	}

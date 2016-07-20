@@ -1,7 +1,7 @@
 #pragma once
 
 
-#include "glew.h"
+#include "GL/glew.h"
 
 typedef GLuint VertexBuffer;
 typedef GLuint IndexBuffer;

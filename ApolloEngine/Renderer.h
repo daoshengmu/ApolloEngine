@@ -143,6 +143,8 @@ public:
 	//--------------------------------------------------------------------------------------
 	ParticleSystem* CreateParticleSystem();
 
+  Graphics* GetGraphics() { return _pGraphics; }
+
 protected:
 private:
 	Renderer() :_pGraphics(NULL), _clearColor( 1, 0, 0, 1 ) {};
