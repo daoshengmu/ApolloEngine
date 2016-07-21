@@ -95,6 +95,7 @@
   <ItemGroup>
     <ClInclude Include="ApolloEngine.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CheckProgram.h" />
     <ClInclude Include="ConstantTable.h" />
     <ClInclude Include="core\core.h" />
     <ClInclude Include="core\Matrix4x4.h" />
@@ -105,8 +106,9 @@
     <ClInclude Include="core\Vector4.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="DefaultShader.h" />
-    <ClInclude Include="FragbufferArrayES1.h" />
-    <ClInclude Include="FragbufferArrayES3.h" />
+    <ClInclude Include="DrawBufferProgram.h" />
+    <ClInclude Include="RedProgramES3.h" />
+    <ClInclude Include="BlueProgramES1.h" />
     <ClInclude Include="glError.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="GraphicsType.h" />

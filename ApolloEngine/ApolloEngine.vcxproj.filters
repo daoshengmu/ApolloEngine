@@ -111,10 +111,16 @@
     <ClInclude Include="ConstantTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FragbufferArrayES3.h">
+    <ClInclude Include="RedProgramES3.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FragbufferArrayES1.h">
+    <ClInclude Include="BlueProgramES1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawBufferProgram.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CheckProgram.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -84,7 +84,7 @@ namespace Apollo
 		//
 		if( !retVal )
 		{
-			printf( "%s\n", errorString );
+			printf( "%d %s\n", glGetError(), errorString );
 			assert( retVal );
 		}
 
