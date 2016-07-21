@@ -85,6 +85,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     DrawBufferTest();
     //DrawRectTest();
     memset(&msg, 0, sizeof(msg));    
+    EmitDrawBuffer();
+    // EmitDrawRect();        
+    
     // Main message loop:
     while (msg.message != WM_QUIT)
     {
@@ -94,9 +97,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         DispatchMessage(&msg);
       }
       else
-      {        
-      //  EmitDrawRect();
-        EmitDrawBuffer();
+      {
+       
       }
     }
         
@@ -165,9 +167,7 @@ GLuint CreateProgram(const char *vsShader, const char *fsShader)
 
   const GLuint vertexLoc = 0;
   const GLuint texLoc = 1;
-  // Init attributes BEFORE linking
-  //glBindAttribLocation(program, vertexLoc, "g_vPositionOS");
-  //glBindAttribLocation(program, texLoc, "g_vTextCoordOS");
+
   glLinkProgram(program);
 
   // Check for link success
@@ -334,10 +334,10 @@ void EmitDrawBuffer()
   result = CheckAttachmentsForColorFn(0, Vector4f(1, 0, 0, 1));
 
   printf("Draw red color check: %d  (%f , %f, %f ,%f), result %d \n",
-    0, 0.0, 1.0, 0.0, 1.0, result);
+    0, 1.0, 0.0, 0.0, 1.0, result);
 
   for (int i = 1; i < maxUsable; ++i) {
-    result = CheckAttachmentsForColorFn(0, Vector4f(0, 1, 0, 1));
+    result = CheckAttachmentsForColorFn(i, Vector4f(0, 1, 0, 1));
 
     printf("Draw red color check: %d  (%f , %f, %f ,%f), result %d \n",
       i, 0.0, 1.0, 0.0, 1.0, result);
@@ -354,7 +354,7 @@ void EmitDrawBuffer()
     0, 0.0, 0.0, 1.0, 1.0, result);
 
   for (int i = 1; i < maxUsable; ++i) {
-    result = CheckAttachmentsForColorFn(0, Vector4f(0, 1, 0, 1));
+    result = CheckAttachmentsForColorFn(i, Vector4f(0, 1, 0, 1));
 
     printf("Draw blue color check: %d  (%f , %f, %f ,%f), result %d \n",
       i, 0.0, 1.0, 0.0, 1.0, result);
@@ -496,41 +496,6 @@ void DrawBufferTest()
 
 void DrawRectTest()
 {
-  // Create frame buffer
-  //GLuint frameBuffer = 0;
-  //glGenFramebuffers(1, &frameBuffer);
-
-  //CheckForErrors();
-
-  //GLint maxDrawingBuffers = 0;
-  //glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawingBuffers);
-  //GLint maxColorAttachments = 0;
-  //glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS, &maxColorAttachments);
-  //GLint maxUniformVectors = 0;
-  //glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_VECTORS, &maxUniformVectors);
-
-  //GLint maxUsable = min(maxDrawingBuffers, min(maxColorAttachments, maxUniformVectors));
-  //GLenum *bufs = new GLenum[maxUsable];
-  //for (int ii = 0; ii < maxUsable; ++ii) {
-  //  bufs[ii] = (GL_COLOR_ATTACHMENT0 + ii);
-  //}
-
-  //// Bind buffer and draw buffer
-  //glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-  //CheckForErrors();
-  //glDrawBuffers(maxUsable, bufs);
-  //CheckForErrors();
-  //delete bufs;
-  
-  
-  // Setup unit rect with texCoord
-  // Initialize vertex and index data ( pos, color, uv, normal )
-  /*float vertexArray[] = {
-    -0.5, -0.5, 0.3, 0,0,
-    0.5, -0.5,  0.3, 1,0,
-    -0.5, 0.5,  0.3, 0,1,
-    0.5,  0.5,  0.3, 1,1
-  };*/
   float vertexArray[] = {
     -1.0f, -1.0f, 0.3f, 0, 0,
     1.0f, -1.0f,  0.3f, 1, 0,
@@ -571,124 +536,6 @@ void DrawRectTest()
 
   redProgram = CreateProgram(redProgramRaw.GetVertexShader()->c_str(),
                              redProgramRaw.GetFragmentShader()->c_str());
-
-  //// Create dummy texture
-  //// The texture we're going to render to
-  //GLuint tex = 0;
-  //int width, height;
-  //width = height = 128;
-
-  //glGenTextures(1, &tex);
-  //glBindTexture(GL_TEXTURE_2D, tex);
-
-  //unsigned int* data = (unsigned int*)new GLuint[((width * height) * 4 * sizeof(unsigned int))];
-  //memset(data, 255, ((width * height) * 4 * sizeof(unsigned int)));	// Clear Storage Memory
-
-  //// change the color to red
-  //for (int i = 0; i < width * height; i+=4) {
-  //  data[i + 1] = 0;
-  //  data[i + 2] = 0;
-  //}
-
-  //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-  //delete[] data;
-
-  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-
-  
-
- ///* GLuint redProgram = wtu.setupProgram(gl, ["vshaderESSL3", "fshaderRed"], ["a_position"]);
- // GLuint blueProgramESSL1 = wtu.setupProgram(gl, ["vshaderESSL1", "fshaderBlueESSL1"], ["a_position"]);*/
-
-
- // /* LightManager::Instance().SetAmbientColor(Vector4f(0.2f, 0.2f, 0.2f, 1));
- // Vector3f dir(0, -1, -15);
- // dir.Normalize();
- // LightManager::Instance().SetDirection(dir);
- // LightManager::Instance().SetDirectionalColor(Vector4f(1, 1, 0, 1));*/
-
- // // Test clearing clears all the textures
- // GLuint tex = 0;
-
- // int width, height;
- // width = height = 128;
-
- // // The texture we're going to render to
- // glGenTextures(1, &tex);
- // glBindTexture(GL_TEXTURE_2D, tex);
-
- // unsigned int* data = (unsigned int*)new GLuint[((width * height) * 4 * sizeof(unsigned int))];
- // memset(data, 0, ((width * height) * 4 * sizeof(unsigned int)));	// Clear Storage Memory
- // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
- // delete[] data;
-
- // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
- // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
- // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
- // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
- // Graphics* pGraphics = renderer.GetGraphics();
-
- // const uint max_fb = 8;
- // GLuint fb = 0;
-
- // for (int i = 0; i < max_fb; ++i) {
- //   fb = pGraphics->CreateFramebuffer();
-
- //   pGraphics->BindFramebuffer(i, fb, tex);
- // }
-
- // //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
- // glBindFramebuffer(GL_FRAMEBUFFER, 0);
- // pGraphics->ClearBit(GL_COLOR_BUFFER_BIT, Vector4f(0, 1, 0, 1));
-
- // // Setup shader
- // Square* squareA = renderer.CreateSquare();
- // FragbufferArrayES1 es1Shader;
- // squareA->GetSurface()->GetMaterial()->CreateProgram(*es1Shader.GetVertexShader(), *es1Shader.GetFragmentShader());
- // renderer.AddRenderItem(squareA);
-
- // // Test success shader to confirm MRT in OGL
-
- // // Read buffer
-
- // // Test failed shader
- // 
- // //   glBindFramebuffer(GL_FRAMEBUFFER, fb);
-
- // //CheckForErrors();
- // GLenum ret = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-
- // if (ret != GL_FRAMEBUFFER_COMPLETE) {
- //   assert(0);
- //   // GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT
- //   // No images are attached to the framebuffer.
- // }
- // glBindFramebuffer(GL_FRAMEBUFFER, fb);
- // glDrawBuffers(8, bufs);
- // CheckForErrors();
- // //glUseProgram(blueProgramESSL1);
- // pGraphics->Draw(squareA->GetSurface());
- // Apollo::CheckForErrors();
- // // Read buffer
- // glReadPixels(0, 0, width, height, GL_RGBA, GL_UNSIGNED_BYTE, fb);
-}
-
-//--------------------------------------------------------------------------------------
-/// @brief Update, set cubeB to CubeA distance, and the parent node
-/// 
-/// @param [in] distanceBA cubeB to CubeA distance
-///
-/// @param [in] transformNode The rotating parent node
-//--------------------------------------------------------------------------------------
-void Update()
-{
-  Renderer &renderer = Renderer::Instance();
-  renderer.Update();
 }
 
 //
