@@ -39,11 +39,13 @@ namespace Apollo
         "} \n";
 
       _fragmentShader =
+        "#version 430 \n"
         "precision mediump float; \n"
+        "out vec4 my_FragColor; \n"
         "\n"
         "void main(void) \n"
         "{ \n"
-        "  gl_FragColor = vec4(0, 0, 1, 1); \n"
+        "  my_FragColor = vec4(0, 0, 1, 1); \n"
         "} \n";
     }
 

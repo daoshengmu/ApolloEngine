@@ -39,7 +39,7 @@ namespace Apollo
         "} \n";
 
       _fragmentShader =
-        "#version 300 es \n"
+        "#version 430 \n"
         "precision mediump float; \n"
         "uniform vec4 u_colors[8]; \n"
         "out vec4 my_FragData[8]; \n"

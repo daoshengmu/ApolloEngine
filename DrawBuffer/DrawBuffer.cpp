@@ -256,11 +256,11 @@ bool CheckAttachmentsForColorFn(int index, const Vector4f &color)
   
   DrawUnitQuadToFrameBuffers();
 
-  GLubyte *data = (GLubyte *)malloc(4 * windowWidth * windowWidth);
-  glReadPixels(0, 0, windowWidth, windowWidth, GL_RGBA, GL_UNSIGNED_BYTE, data);
+  GLubyte *data = (GLubyte *)malloc(3 * windowWidth * windowWidth);
+  glReadPixels(0, 0, windowWidth, windowWidth, GL_RGB, GL_UNSIGNED_BYTE, data);
 
   if ((data[0] == color.x * 255) && (data[1] == color.y * 255) &&
-    (data[2] == color.z * 255) && (data[3] == color.w * 255)) {
+    (data[2] == color.z * 255)) {
 
     free(data);
     return true;
@@ -405,6 +405,14 @@ void DrawBufferTest()
   memcpy_s(indexData, numIndices * sizeof(uint16), indexArray, sizeof(indexArray));
 
   bool check;
+
+  // Dummy for solving the NV driver issue OpenGL 4.5
+  // TODO:: I need to replace OpenGL 3.0 API with OpenGL 4.0
+  // http://stackoverflow.com/questions/21652546/what-is-the-role-of-glbindvertexarrays-vs-glbindbuffer-and-what-is-their-relatio
+  GLuint vao;
+  glGenVertexArrays(1, &vao);
+  glBindVertexArray(vao);
+  // ---
 
   glGenBuffers(1, &vertexBuffer);
   check = CheckForErrors();

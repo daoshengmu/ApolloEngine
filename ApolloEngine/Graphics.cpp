@@ -1,4 +1,4 @@
-
+﻿
 #include "stdafx.h"
 #include "Graphics.h"
 #include "Surface.h"
@@ -6,6 +6,7 @@
 #include <assert.h>
 #include "LightManager.h"
 #include "ConstantTable.h"
+#include <GL/wglext.h>
 
 namespace Apollo
 {
@@ -79,8 +80,9 @@ bool Graphics::Initialize( HWND hWnd, UINT width, UINT height, bool bFullScreen 
 	{ 
 		return false;
 	}
+  
+  _glhRC = wglCreateContext(_glDev);
 
-	_glhRC = wglCreateContext( _glDev );
 	wglMakeCurrent( _glDev, _glhRC );
 
 	GLenum err = glewInit();
@@ -133,6 +135,28 @@ bool Graphics::Initialize( HWND hWnd, UINT width, UINT height, bool bFullScreen 
 			return false;
 		}
 	} // End of if-bFullScreen
+
+  PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB 
+    = (PFNWGLCREATECONTEXTATTRIBSARBPROC)wglGetProcAddress("wglCreateContextAttribsARB");
+  if (wglCreateContextAttribsARB)
+  {
+    GLint attribs[] =
+    {
+      // Here we ask for OpenGL 4.5
+      WGL_CONTEXT_MAJOR_VERSION_ARB, 4,
+      WGL_CONTEXT_MINOR_VERSION_ARB, 5,
+      0
+    };
+    _glhRC = wglCreateContextAttribsARB(_glDev, 0, attribs);
+
+    if (_glhRC)
+    {
+      wglMakeCurrent(_glDev, _glhRC);
+    }
+  }
+
+  printf("OpenGL version supported by this platform (%s): \n",
+    glGetString(GL_VERSION));
 
 	SetViewPort( 0, 0, width, height );
   	glEnable( GL_CULL_FACE );
